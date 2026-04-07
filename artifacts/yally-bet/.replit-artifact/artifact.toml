@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "YALLY BET"
+version = "1.0.0"
+id = "artifacts/yally-bet"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18606
+
+[services.development]
+run = "pnpm --filter @workspace/yally-bet run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/yally-bet", "run", "build" ]
+publicDir = "artifacts/yally-bet/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18606"
+BASE_PATH = "/"
