@@ -2,14 +2,19 @@
 
 REPO="kingyally/YALLY-STORE"
 BRANCH="main"
+USERNAME="kingyally"
+
+# Clear any git locks that might exist
+rm -f /home/runner/workspace/.git/config.lock 2>/dev/null || true
 
 # Configure git identity
 git config --global user.email "seif83470@gmail.com"
 git config --global user.name "YALLY BET Auto"
+git config --global credential.helper ""
 
-# Use correct format for fine-grained PAT authentication
+# Use username:token format (required for fine-grained PATs)
 git remote remove github 2>/dev/null || true
-git remote add github "https://oauth2:${GITHUB_TOKEN}@github.com/${REPO}.git"
+git remote add github "https://${USERNAME}:${GITHUB_TOKEN}@github.com/${REPO}.git"
 
 # Stage all changes
 git add -A
@@ -21,20 +26,13 @@ if ! git diff --cached --quiet; then
   echo "[$(date '+%H:%M:%S')] Commit: $COMMIT_MSG"
 fi
 
-# Push to GitHub
-PUSH_RESULT=$(git push github HEAD:${BRANCH} 2>&1)
-if echo "$PUSH_RESULT" | grep -q "Everything up-to-date\|HEAD -> main\| -> main"; then
+# Push using environment variable for token
+PUSH_OUTPUT=$(GIT_TERMINAL_PROMPT=0 git push github HEAD:${BRANCH} 2>&1)
+PUSH_EXIT=$?
+
+if [ $PUSH_EXIT -eq 0 ]; then
   echo "[$(date '+%H:%M:%S')] Imepushwa GitHub vizuri!"
-elif echo "$PUSH_RESULT" | grep -q "rejected\|error\|403\|Permission"; then
-  # Try alternate format
-  git remote remove github 2>/dev/null || true
-  git remote add github "https://x-token-auth:${GITHUB_TOKEN}@github.com/${REPO}.git"
-  PUSH_RESULT2=$(git push github HEAD:${BRANCH} 2>&1)
-  if echo "$PUSH_RESULT2" | grep -q "error\|403\|Permission"; then
-    echo "[$(date '+%H:%M:%S')] Bado hitilafu: $PUSH_RESULT2"
-  else
-    echo "[$(date '+%H:%M:%S')] Imepushwa GitHub vizuri!"
-  fi
+  echo "$PUSH_OUTPUT"
 else
-  echo "[$(date '+%H:%M:%S')] $PUSH_RESULT"
+  echo "[$(date '+%H:%M:%S')] Hitilafu (exit $PUSH_EXIT): $PUSH_OUTPUT"
 fi
