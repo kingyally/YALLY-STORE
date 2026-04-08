@@ -164,20 +164,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
     loadAppSettings();
   }, []);
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('admin-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_users' }, () => loadUsers())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_admins' }, () => loadAdmins())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'unlocked_tickets' }, () => loadRequests())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'banners' }, () => loadBanners())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tipsters' }, () => loadTipstersFromDb())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bet_history' }, () => loadHistoryFromDb())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'packages' }, () => loadPackagesFromDb())
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'app_settings' }, () => loadAppSettings())
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, []);
 
   const loadUsers = async () => { setLoadingUsers(true); setAllUsers(await fetchAllUsers()); setLoadingUsers(false); };
   const loadRequests = async () => { setLoadingRequests(true); setTicketRequests(await fetchAllTicketRequests()); setLoadingRequests(false); };
@@ -185,10 +171,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
   const loadBanners = async () => { setLoadingBanners(true); setBannerList(await fetchBanners()); setLoadingBanners(false); };
 
   const getBannerPublicUrl = (banner: Banner) => {
-    if (banner.image_url.startsWith('http')) return banner.image_url;
-    if (banner.image_url.startsWith('default_')) return '';
-    const { data } = supabase.storage.from('banners').getPublicUrl(banner.image_url);
-    return data.publicUrl;
+    if (!banner.image_url || banner.image_url.startsWith('default_')) return '';
+    return banner.image_url;
   };
 
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
