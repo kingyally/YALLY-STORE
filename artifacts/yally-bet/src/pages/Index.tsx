@@ -8,44 +8,42 @@ import { TicketsView } from '@/components/betting/TicketsView';
 import { HistoryView } from '@/components/betting/HistoryView';
 import { AccountView } from '@/components/betting/AccountView';
 import { PaymentModal } from '@/components/betting/PaymentModal';
-import { AdminLoginModal } from '@/components/betting/AdminLoginModal';
-import { isAdmin as checkIsAdmin, getAdminEntry, addAdmin, ALL_PERMISSIONS, type AdminEntry } from '@/lib/adminService';
 import { AdminPanel } from '@/components/betting/AdminPanel';
+import { getAdminEntry, addAdmin, ALL_PERMISSIONS, type AdminEntry } from '@/lib/adminService';
 import { Tipster, Settings } from '@/types/betting';
 import { DEFAULT_SETTINGS } from '@/constants/betting';
-import { loginUser, registerUser, loadSession, clearSession, saveUnlockedTicket, loadUnlockedTickets } from '@/lib/userService';
+import { loginUser, registerUser, loadSession, clearSession, loadUnlockedTickets } from '@/lib/userService';
 import type { AppUser } from '@/lib/userService';
 import { toast } from 'sonner';
 import { fetchTipsters, fetchHistory, fetchPackages, fetchAppSettings } from '@/lib/settingsService';
 
 const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // start true for session check
+  const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
+
+  // Form fields
   const [loginName, setLoginName] = useState('');
-  const [loginPhone, setLoginPhone] = useState('');
   const [loginEmail, setLoginEmail] = useState('');
+  const [loginPhone, setLoginPhone] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+
   const [activeTab, setActiveTab] = useState<'home' | 'tickets' | 'history' | 'account' | 'admin'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [unlockedTickets, setUnlockedTickets] = useState<number[]>([]);
-  
+
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedTipster, setSelectedTipster] = useState<Tipster | null>(null);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
 
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminEntry, setAdminEntry] = useState<AdminEntry | null>(null);
 
-  // Load settings from DB
+  // Load remote settings
   const loadSettingsFromDb = async () => {
     const [tipsters, history, packages, appSettings] = await Promise.all([
-      fetchTipsters(),
-      fetchHistory(),
-      fetchPackages(),
-      fetchAppSettings(),
+      fetchTipsters(), fetchHistory(), fetchPackages(), fetchAppSettings(),
     ]);
     setSettings(prev => ({
       ...prev,
@@ -63,6 +61,15 @@ const Index = () => {
     }));
   };
 
+  // Check and set admin status for a user
+  const checkAndSetAdmin = async (user: AppUser) => {
+    const entry = await getAdminEntry(user.email);
+    if (entry) {
+      setIsAdmin(true);
+      setAdminEntry(entry);
+    }
+  };
+
   // Restore session on mount
   useEffect(() => {
     const restored = loadSession();
@@ -70,49 +77,52 @@ const Index = () => {
       setCurrentUser(restored);
       setIsLoggedIn(true);
       setLoginName(restored.name);
-      setLoginPhone(restored.phone);
       setLoginEmail(restored.email);
-      // Check admin & load tickets
-      getAdminEntry(restored.email).then(entry => {
-        if (entry) { setIsAdmin(true); setAdminEntry(entry); }
-      });
-      loadUnlockedTickets(restored.id).then(tickets => {
-        setUnlockedTickets(tickets);
-      });
+      setLoginPhone(restored.phone);
+      checkAndSetAdmin(restored);
+      loadUnlockedTickets(restored.id).then(setUnlockedTickets);
     }
     setIsLoading(false);
     loadSettingsFromDb();
   }, []);
 
-  const handleLoginSuccess = async (user: AppUser) => {
+  const handleLoginSuccess = async (user: AppUser, isFirstUser = false) => {
     setCurrentUser(user);
     setIsLoggedIn(true);
     setLoginName(user.name);
-    setLoginPhone(user.phone);
     setLoginEmail(user.email);
-    if (user.email) {
-      const entry = await getAdminEntry(user.email);
-      if (entry) { setIsAdmin(true); setAdminEntry(entry); }
+    setLoginPhone(user.phone);
+
+    // First user ever registered = automatic super admin
+    if (isFirstUser) {
+      await addAdmin(user.email, 'system', ALL_PERMISSIONS);
     }
-    // Load unlocked tickets from DB
+
+    // Load admin status
+    const entry = await getAdminEntry(user.email);
+    if (entry) {
+      setIsAdmin(true);
+      setAdminEntry(entry);
+    }
+
+    // Load tickets
     const tickets = await loadUnlockedTickets(user.id);
     setUnlockedTickets(tickets);
-    toast.success(`Karibu ${user.name}!`);
+    toast.success(`Karibu ${user.name}! 🎉`);
   };
 
   const handleLogin = async () => {
-    if (!loginPhone.trim() || !loginPassword.trim()) return;
+    if (!loginEmail.trim() || !loginPassword.trim()) return;
     setIsLoading(true);
     setLoginError('');
     try {
-      const result = await loginUser(loginPhone.trim(), loginPassword.trim());
+      const result = await loginUser(loginEmail.trim(), loginPassword.trim());
       if (result.user) {
-        handleLoginSuccess(result.user);
+        await handleLoginSuccess(result.user);
       } else {
         setLoginError(result.error || 'Kuna tatizo. Jaribu tena.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setLoginError('Kuna tatizo la mtandao.');
     } finally {
       setIsLoading(false);
@@ -120,18 +130,19 @@ const Index = () => {
   };
 
   const handleRegister = async () => {
-    if (!loginName.trim() || !loginPhone.trim() || !loginEmail.trim() || !loginPassword.trim()) return;
+    if (!loginName.trim() || !loginEmail.trim() || !loginPassword.trim()) return;
     setIsLoading(true);
     setLoginError('');
     try {
-      const result = await registerUser(loginName.trim(), loginPhone.trim(), loginEmail.trim(), loginPassword.trim());
+      const result = await registerUser(
+        loginName.trim(), loginEmail.trim(), loginPhone.trim(), loginPassword.trim()
+      );
       if (result.user) {
-        handleLoginSuccess(result.user);
+        await handleLoginSuccess(result.user, result.isFirstUser);
       } else {
         setLoginError(result.error || 'Kuna tatizo. Jaribu tena.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setLoginError('Kuna tatizo la mtandao.');
     } finally {
       setIsLoading(false);
@@ -143,13 +154,14 @@ const Index = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
     setLoginName('');
-    setLoginPhone('');
     setLoginEmail('');
+    setLoginPhone('');
     setLoginPassword('');
     setLoginError('');
     setActiveTab('home');
     setUnlockedTickets([]);
     setIsAdmin(false);
+    setAdminEntry(null);
   };
 
   const handleUnlock = async (t: Tipster) => {
@@ -169,43 +181,31 @@ const Index = () => {
     setActiveTab('tickets');
   };
 
-  const handleAdminLoginSuccess = async (adminEmail: string) => {
-    setShowAdminLogin(false);
-    setIsAdmin(true);
-    // Get or create super admin entry automatically
-    let entry = await getAdminEntry(adminEmail);
-    if (!entry) {
-      await addAdmin(adminEmail, 'system', ALL_PERMISSIONS);
-      entry = await getAdminEntry(adminEmail);
-    }
-    if (entry) setAdminEntry(entry);
-  };
-
   const handleUpdateSettings = (newSettings: Settings) => {
     setSettings(newSettings);
-    // Reload from DB to get latest
     loadSettingsFromDb();
   };
 
-  // Show loading while checking session
+  // Loading screen
   if (isLoading && !isLoggedIn) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <div className="w-8 h-8 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
 
+  // Login / Register screen
   if (!isLoggedIn) {
     return (
       <LoginScreen
         loginName={loginName}
-        loginPhone={loginPhone}
         loginEmail={loginEmail}
+        loginPhone={loginPhone}
         loginPassword={loginPassword}
         setLoginName={setLoginName}
-        setLoginPhone={setLoginPhone}
         setLoginEmail={setLoginEmail}
+        setLoginPhone={setLoginPhone}
         setLoginPassword={setLoginPassword}
         onLogin={handleLogin}
         onRegister={handleRegister}
@@ -235,12 +235,14 @@ const Index = () => {
           {activeTab === 'history' && <HistoryView key="history" settings={settings} />}
           {activeTab === 'account' && (
             <AccountView key="account" userName={loginName} userPhone={loginPhone}
-              settings={settings} onLogout={handleLogout} onAdminLogin={() => setShowAdminLogin(true)}
+              settings={settings} onLogout={handleLogout}
               unlockedCount={unlockedTickets.length}
             />
           )}
           {activeTab === 'admin' && isAdmin && adminEntry && (
-            <AdminPanel key="admin" settings={settings} onUpdateSettings={handleUpdateSettings} onExit={() => setActiveTab('home')} adminEntry={adminEntry} />
+            <AdminPanel key="admin" settings={settings} onUpdateSettings={handleUpdateSettings}
+              onExit={() => setActiveTab('home')} adminEntry={adminEntry}
+            />
           )}
         </AnimatePresence>
       </main>
@@ -251,15 +253,14 @@ const Index = () => {
         {showPaymentModal && selectedTipster && (
           <PaymentModal tipster={selectedTipster}
             onClose={() => { setShowPaymentModal(false); setSelectedTipster(null); }}
-            onSuccess={handlePaymentSuccess} paymentNumber={settings.paymentNumber} paymentMethods={settings.paymentMethods}
-            userId={currentUser?.id} userName={currentUser?.name} userEmail={currentUser?.email} userPhone={currentUser?.phone}
+            onSuccess={handlePaymentSuccess}
+            paymentNumber={settings.paymentNumber}
+            paymentMethods={settings.paymentMethods}
+            userId={currentUser?.id}
+            userName={currentUser?.name}
+            userEmail={currentUser?.email}
+            userPhone={currentUser?.phone}
           />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showAdminLogin && (
-          <AdminLoginModal onClose={() => setShowAdminLogin(false)} onSuccess={handleAdminLoginSuccess} userEmail={loginEmail} />
         )}
       </AnimatePresence>
     </div>

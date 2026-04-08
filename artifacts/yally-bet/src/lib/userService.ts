@@ -51,29 +51,36 @@ export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
 }
 
-export async function loginUser(phone: string, password: string): Promise<{ user?: AppUser; error?: string }> {
+// Login using email + password
+export async function loginUser(email: string, password: string): Promise<{ user?: AppUser; error?: string }> {
   const users = getUsersLocal();
-  const user = users.find(u => u.phone === phone);
-  if (!user) return { error: 'Nambari hii haijasajiliwa.' };
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
+  if (!user) return { error: 'Email hii haijasajiliwa.' };
   const stored = localStorage.getItem(`yallybet_pw_${user.id}`);
   if (stored !== password) return { error: 'Nywila si sahihi.' };
   localStorage.setItem(SESSION_KEY, JSON.stringify(user));
   return { user };
 }
 
-export async function registerUser(name: string, phone: string, email: string, password: string): Promise<{ user?: AppUser; error?: string }> {
+// Register with name + email + phone (optional) + password
+export async function registerUser(name: string, email: string, phone: string, password: string): Promise<{ user?: AppUser; error?: string; isFirstUser?: boolean }> {
   const users = getUsersLocal();
-  if (users.find(u => u.phone === phone)) return { error: 'Nambari hii imeshatumika.' };
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase().trim())) {
+    return { error: 'Email hii imeshatumika. Jaribu nyingine.' };
+  }
+  const isFirstUser = users.length === 0;
   const user: AppUser = {
     id: `u_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-    name, phone, email,
+    name: name.trim(),
+    email: email.toLowerCase().trim(),
+    phone: phone.trim(),
     created_at: new Date().toISOString(),
   };
   users.push(user);
   saveUsersLocal(users);
   localStorage.setItem(`yallybet_pw_${user.id}`, password);
   localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  return { user };
+  return { user, isFirstUser };
 }
 
 export async function fetchAllUsers(): Promise<AppUser[]> {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserCircle, Shield, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Clock, Ticket } from 'lucide-react';
+import { UserCircle, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Ticket } from 'lucide-react';
 import { Settings } from '@/types/betting';
 
 interface AccountViewProps {
@@ -8,13 +8,11 @@ interface AccountViewProps {
   userPhone: string;
   settings: Settings;
   onLogout: () => void;
-  onAdminLogin?: () => void;
   unlockedCount?: number;
-  joinDate?: string;
 }
 
 export const AccountView: React.FC<AccountViewProps> = ({
-  userName, userPhone, settings, onLogout, onAdminLogin, unlockedCount = 0, joinDate
+  userName, userPhone, settings, onLogout, unlockedCount = 0
 }) => {
   return (
     <motion.div
@@ -95,18 +93,6 @@ export const AccountView: React.FC<AccountViewProps> = ({
           ))}
         </div>
       </section>
-
-      {/* Admin Login */}
-      {onAdminLogin && (
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={onAdminLogin}
-          className="w-full py-3.5 text-amber-400 font-black glass border-amber-500/20 rounded-xl hover:bg-amber-500/10 transition-all uppercase tracking-widest text-[11px] flex items-center justify-center gap-2"
-        >
-          <Shield size={14} />
-          Admin Panel
-        </motion.button>
-      )}
 
       {/* Logout */}
       <motion.button
