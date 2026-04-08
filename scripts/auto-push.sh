@@ -3,33 +3,38 @@
 REPO="kingyally/YALLY-STORE"
 BRANCH="main"
 
-# Configure git with token
+# Configure git identity
 git config --global user.email "seif83470@gmail.com"
 git config --global user.name "YALLY BET Auto"
-git config --global push.default current
 
-# Set remote with new token
+# Use correct format for fine-grained PAT authentication
 git remote remove github 2>/dev/null || true
-git remote add github "https://${GITHUB_TOKEN}@github.com/${REPO}.git"
+git remote add github "https://oauth2:${GITHUB_TOKEN}@github.com/${REPO}.git"
 
-# Stage all new changes
+# Stage all changes
 git add -A
 
 # Commit if there are staged changes
 if ! git diff --cached --quiet; then
   COMMIT_MSG="auto: mabadiliko $(date '+%Y-%m-%d %H:%M:%S')"
   git commit -m "$COMMIT_MSG"
-  echo "[$(date '+%H:%M:%S')] Commit mpya: $COMMIT_MSG"
+  echo "[$(date '+%H:%M:%S')] Commit: $COMMIT_MSG"
 fi
 
-# Always try to push (handles both new commits and unpushed old commits)
-UNPUSHED=$(git log github/${BRANCH}..HEAD --oneline 2>/dev/null | wc -l)
-if [ "$UNPUSHED" -gt "0" ] 2>/dev/null || ! git ls-remote --exit-code github ${BRANCH} >/dev/null 2>&1; then
-  if git push github HEAD:${BRANCH} 2>&1; then
-    echo "[$(date '+%H:%M:%S')] Imepushwa GitHub vizuri!"
+# Push to GitHub
+PUSH_RESULT=$(git push github HEAD:${BRANCH} 2>&1)
+if echo "$PUSH_RESULT" | grep -q "Everything up-to-date\|HEAD -> main\| -> main"; then
+  echo "[$(date '+%H:%M:%S')] Imepushwa GitHub vizuri!"
+elif echo "$PUSH_RESULT" | grep -q "rejected\|error\|403\|Permission"; then
+  # Try alternate format
+  git remote remove github 2>/dev/null || true
+  git remote add github "https://x-token-auth:${GITHUB_TOKEN}@github.com/${REPO}.git"
+  PUSH_RESULT2=$(git push github HEAD:${BRANCH} 2>&1)
+  if echo "$PUSH_RESULT2" | grep -q "error\|403\|Permission"; then
+    echo "[$(date '+%H:%M:%S')] Bado hitilafu: $PUSH_RESULT2"
   else
-    echo "[$(date '+%H:%M:%S')] Hitilafu ya push - angalia token yako"
+    echo "[$(date '+%H:%M:%S')] Imepushwa GitHub vizuri!"
   fi
 else
-  echo "[$(date '+%H:%M:%S')] Hakuna mabadiliko mapya ya kupush."
+  echo "[$(date '+%H:%M:%S')] $PUSH_RESULT"
 fi
