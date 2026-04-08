@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserCircle, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Ticket } from 'lucide-react';
+import { UserCircle, Shield, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Ticket } from 'lucide-react';
 import { Settings } from '@/types/betting';
 
 interface AccountViewProps {
