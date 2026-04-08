@@ -35,34 +35,48 @@
 }
 
 :root {
-  --background: 222 47% 5%;
-  --foreground: 210 40% 96%;
-  --card: 222 47% 8%;
-  --card-foreground: 210 40% 96%;
-  --popover: 222 47% 8%;
-  --popover-foreground: 210 40% 96%;
-  --primary: 160 84% 39%;
-  --primary-foreground: 222 47% 6%;
-  --secondary: 217 33% 12%;
-  --secondary-foreground: 210 40% 96%;
-  --muted: 217 33% 12%;
-  --muted-foreground: 215 20% 50%;
-  --accent: 160 84% 39%;
-  --accent-foreground: 222 47% 6%;
+  /* ═══════════════════════════════════════════════════
+     YALLY BET — Royal Violet × Gold × Deep Navy Theme
+  ═══════════════════════════════════════════════════ */
+  --background: 230 28% 4%;
+  --foreground: 220 30% 95%;
+
+  --card: 230 25% 7%;
+  --card-foreground: 220 30% 95%;
+
+  --popover: 230 25% 7%;
+  --popover-foreground: 220 30% 95%;
+
+  /* Primary: Electric Violet */
+  --primary: 258 88% 66%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 230 22% 12%;
+  --secondary-foreground: 220 30% 90%;
+
+  --muted: 230 22% 12%;
+  --muted-foreground: 220 15% 48%;
+
+  --accent: 258 88% 66%;
+  --accent-foreground: 0 0% 100%;
+
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
-  --border: 217 33% 14%;
-  --input: 217 33% 14%;
-  --ring: 160 84% 39%;
+
+  --border: 230 22% 14%;
+  --input: 230 22% 14%;
+  --ring: 258 88% 66%;
+
   --radius: 1rem;
 
-  /* Custom tokens */
-  --shadow-glow: 0 0 50px -12px hsl(160 84% 39% / 0.35);
-  --shadow-glow-sm: 0 0 20px -5px hsl(160 84% 39% / 0.25);
-  --shadow-card: 0 8px 32px -8px hsl(0 0% 0% / 0.6);
-  --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.7);
-  --shadow-inner: inset 0 1px 0 0 hsl(0 0% 100% / 0.03);
-  --shadow-neon: 0 0 15px -3px hsl(160 84% 39% / 0.5), 0 0 40px -10px hsl(160 84% 39% / 0.3);
+  /* ─── Shadows ─── */
+  --shadow-glow:    0 0 55px -12px hsl(258 88% 66% / 0.45);
+  --shadow-glow-sm: 0 0 22px -5px  hsl(258 88% 66% / 0.30);
+  --shadow-card:    0 8px 32px -8px  hsl(0 0% 0% / 0.65);
+  --shadow-elevated:0 20px 60px -15px hsl(0 0% 0% / 0.75);
+  --shadow-inner:   inset 0 1px 0 0  hsl(0 0% 100% / 0.04);
+  --shadow-neon:    0 0 18px -3px hsl(258 88% 66% / 0.55), 0 0 45px -10px hsl(258 88% 66% / 0.30);
+  --shadow-gold:    0 0 20px -5px  hsl(45 100% 55% / 0.40);
 }
 
 @layer base {
@@ -85,119 +99,132 @@
 }
 
 @layer utilities {
+  /* ─── Glass effects ─── */
   .glass {
     backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.4);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.7), hsl(var(--card) / 0.4));
+    border: 1px solid hsl(var(--border) / 0.5);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.75), hsl(var(--card) / 0.45));
     box-shadow: var(--shadow-inner), var(--shadow-card);
   }
 
   .glass-strong {
     backdrop-filter: blur(32px);
-    border: 1px solid hsl(var(--border) / 0.5);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.9), hsl(var(--card) / 0.7));
+    border: 1px solid hsl(var(--border) / 0.6);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.92), hsl(var(--card) / 0.72));
     box-shadow: var(--shadow-inner), var(--shadow-elevated);
   }
 
   .glass-subtle {
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.2);
-    background: hsl(var(--card) / 0.3);
+    border: 1px solid hsl(var(--border) / 0.25);
+    background: hsl(var(--card) / 0.35);
   }
 
   .glass-premium {
     backdrop-filter: blur(32px);
-    border: 1px solid hsl(var(--primary) / 0.2);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.8), hsl(var(--primary) / 0.05));
+    border: 1px solid hsl(var(--primary) / 0.25);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.82), hsl(var(--primary) / 0.06));
     box-shadow: var(--shadow-inner), var(--shadow-card), var(--shadow-glow-sm);
   }
 
+  /* ─── Text gradients ─── */
   .text-gradient-emerald {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(135deg, hsl(160 84% 50%), hsl(155 80% 38%));
+    background-image: linear-gradient(135deg, hsl(258 88% 75%), hsl(280 85% 65%));
   }
 
   .text-gradient-gold {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(135deg, hsl(45 93% 65%), hsl(38 92% 50%));
+    background-image: linear-gradient(135deg, hsl(45 100% 68%), hsl(38 95% 52%));
   }
 
   .text-gradient-premium {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(135deg, hsl(160 84% 50%), hsl(185 80% 55%), hsl(160 84% 45%));
+    background-image: linear-gradient(135deg, hsl(258 88% 75%), hsl(300 80% 65%), hsl(258 88% 68%));
   }
 
-  .glow-emerald { box-shadow: var(--shadow-glow); }
+  /* ─── Glows ─── */
+  .glow-emerald    { box-shadow: var(--shadow-glow); }
   .glow-emerald-sm { box-shadow: var(--shadow-glow-sm); }
-  .glow-neon { box-shadow: var(--shadow-neon); }
+  .glow-neon       { box-shadow: var(--shadow-neon); }
 
+  /* ─── Font ─── */
   .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; }
 
+  /* ─── Shimmer ─── */
   .shimmer { position: relative; overflow: hidden; }
   .shimmer::after {
     content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.03) 50%, transparent 100%);
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.04) 50%, transparent 100%);
     animation: shimmer 3s ease-in-out infinite;
   }
 
+  /* ─── Card hover ─── */
   .card-hover { transition: all 0.3s; }
   .card-hover:hover { transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
 
+  /* ─── Buttons ─── */
   .btn-primary-premium {
-    background: linear-gradient(135deg, hsl(160 84% 39%), hsl(155 80% 32%));
-    box-shadow: 0 4px 15px -3px hsl(160 84% 39% / 0.4), var(--shadow-inner);
+    background: linear-gradient(135deg, hsl(258 88% 66%), hsl(278 85% 55%));
+    box-shadow: 0 4px 18px -3px hsl(258 88% 66% / 0.50), var(--shadow-inner);
+    transition: all 0.25s;
   }
   .btn-primary-premium:hover {
-    background: linear-gradient(135deg, hsl(160 84% 44%), hsl(155 80% 36%));
-    box-shadow: 0 6px 25px -5px hsl(160 84% 39% / 0.5);
+    background: linear-gradient(135deg, hsl(258 88% 72%), hsl(278 85% 60%));
+    box-shadow: 0 6px 28px -5px hsl(258 88% 66% / 0.65);
   }
 
   .btn-premium-gold {
-    background: linear-gradient(135deg, hsl(45 93% 58%), hsl(38 92% 45%));
-    box-shadow: 0 4px 15px -3px hsl(45 93% 58% / 0.4), var(--shadow-inner);
-    color: hsl(222 47% 6%);
+    background: linear-gradient(135deg, hsl(45 100% 58%), hsl(38 92% 46%));
+    box-shadow: var(--shadow-gold), var(--shadow-inner);
+    color: hsl(230 28% 8%);
+    font-weight: 900;
+    transition: all 0.25s;
+  }
+  .btn-premium-gold:hover {
+    background: linear-gradient(135deg, hsl(45 100% 63%), hsl(38 92% 52%));
   }
 
+  /* ─── Noise texture ─── */
   .noise-texture { position: relative; }
   .noise-texture::before {
     content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.015;
+    position: absolute; inset: 0; opacity: 0.015;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    pointer-events: none;
-    border-radius: inherit;
+    pointer-events: none; border-radius: inherit;
   }
 
+  /* ─── Scrollbar hide ─── */
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
 
+  /* ─── Badges ─── */
   .badge-vip {
-    background: linear-gradient(135deg, hsl(45 93% 58%), hsl(38 92% 45%));
-    color: hsl(222 47% 6%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
+    background: linear-gradient(135deg, hsl(45 100% 58%), hsl(38 92% 46%));
+    color: hsl(230 28% 8%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
   }
   .badge-fixed {
-    background: linear-gradient(135deg, hsl(160 84% 39%), hsl(155 80% 30%));
-    color: hsl(222 47% 6%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
+    background: linear-gradient(135deg, hsl(258 88% 66%), hsl(278 85% 55%));
+    color: hsl(0 0% 100%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
   }
   .badge-cs {
     background: linear-gradient(135deg, hsl(350 89% 60%), hsl(340 80% 50%));
     color: hsl(0 0% 100%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
   }
   .badge-free {
-    background: linear-gradient(135deg, hsl(217 91% 60%), hsl(220 80% 50%));
+    background: linear-gradient(135deg, hsl(195 85% 50%), hsl(210 80% 45%));
     color: hsl(0 0% 100%); font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
   }
 }
 
+/* ══════════════ Keyframe animations ══════════════ */
 @keyframes scroll-ticker {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -234,8 +261,8 @@
 .animate-count-up { animation: count-up 0.5s ease-out forwards; }
 
 @keyframes border-glow {
-  0%, 100% { border-color: hsl(160 84% 39% / 0.2); }
-  50% { border-color: hsl(160 84% 39% / 0.5); }
+  0%, 100% { border-color: hsl(258 88% 66% / 0.2); }
+  50% { border-color: hsl(258 88% 66% / 0.6); }
 }
 .animate-border-glow { animation: border-glow 3s ease-in-out infinite; }
 
@@ -246,8 +273,8 @@
 .animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 15px -3px hsl(160 84% 39% / 0.3); }
-  50% { box-shadow: 0 0 30px -3px hsl(160 84% 39% / 0.5); }
+  0%, 100% { box-shadow: 0 0 18px -3px hsl(258 88% 66% / 0.35); }
+  50%       { box-shadow: 0 0 35px -3px hsl(258 88% 66% / 0.60); }
 }
 .animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
 
