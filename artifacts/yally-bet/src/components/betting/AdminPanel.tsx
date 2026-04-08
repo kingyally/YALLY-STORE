@@ -268,7 +268,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
-  const tabs = allTabs.filter(tab => myPermissions.includes(tab.id as AdminPermission));
+  const tabs = allTabs.filter(tab =>
+    tab.id === 'dashboard' ? isSuperAdmin : myPermissions.includes(tab.id as AdminPermission)
+  );
 
   // Tipster helpers
   const addTipster = () => {
