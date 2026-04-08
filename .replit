@@ -30,12 +30,12 @@ args = "Auto GitHub Push"
 name = "Auto GitHub Push"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node scripts/git-watcher.js"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node scripts/git-watcher.mjs"
 
 [agent]
 stack = "PNPM_WORKSPACE"
