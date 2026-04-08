@@ -9,7 +9,7 @@ import { HistoryView } from '@/components/betting/HistoryView';
 import { AccountView } from '@/components/betting/AccountView';
 import { PaymentModal } from '@/components/betting/PaymentModal';
 import { AdminLoginModal } from '@/components/betting/AdminLoginModal';
-import { isAdmin as checkIsAdmin, getAdminEntry, type AdminEntry } from '@/lib/adminService';
+import { isAdmin as checkIsAdmin, getAdminEntry, addAdmin, ALL_PERMISSIONS, type AdminEntry } from '@/lib/adminService';
 import { AdminPanel } from '@/components/betting/AdminPanel';
 import { Tipster, Settings } from '@/types/betting';
 import { DEFAULT_SETTINGS } from '@/constants/betting';
@@ -169,13 +169,16 @@ const Index = () => {
     setActiveTab('tickets');
   };
 
-  const handleAdminLoginSuccess = async () => {
+  const handleAdminLoginSuccess = async (adminEmail: string) => {
     setShowAdminLogin(false);
     setIsAdmin(true);
-    if (loginEmail) {
-      const entry = await getAdminEntry(loginEmail);
-      if (entry) setAdminEntry(entry);
+    // Get or create super admin entry automatically
+    let entry = await getAdminEntry(adminEmail);
+    if (!entry) {
+      await addAdmin(adminEmail, 'system', ALL_PERMISSIONS);
+      entry = await getAdminEntry(adminEmail);
     }
+    if (entry) setAdminEntry(entry);
   };
 
   const handleUpdateSettings = (newSettings: Settings) => {

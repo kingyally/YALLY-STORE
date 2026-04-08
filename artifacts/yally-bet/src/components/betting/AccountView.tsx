@@ -96,6 +96,18 @@ export const AccountView: React.FC<AccountViewProps> = ({
         </div>
       </section>
 
+      {/* Admin Login */}
+      {onAdminLogin && (
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={onAdminLogin}
+          className="w-full py-3.5 text-amber-400 font-black glass border-amber-500/20 rounded-xl hover:bg-amber-500/10 transition-all uppercase tracking-widest text-[11px] flex items-center justify-center gap-2"
+        >
+          <Shield size={14} />
+          Admin Panel
+        </motion.button>
+      )}
+
       {/* Logout */}
       <motion.button
         whileTap={{ scale: 0.97 }}

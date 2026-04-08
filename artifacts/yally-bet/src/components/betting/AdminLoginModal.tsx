@@ -5,7 +5,7 @@ export const ADMIN_EMAIL = 'seif83470@gmail.com';
 
 interface AdminLoginModalProps {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (email: string) => void;
   userEmail?: string;
 }
 
@@ -16,7 +16,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose, onSuc
 
   const handleLogin = () => {
     if (email.toLowerCase() === ADMIN_EMAIL && password === 'admin2026') {
-      onSuccess();
+      onSuccess(email.toLowerCase());
     } else {
       setError('Email au password si sahihi');
     }
