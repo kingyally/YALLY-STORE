@@ -1,3 +1,5 @@
+import { api } from './apiClient';
+
 export type AdminPermission = 'requests' | 'tipsters' | 'history' | 'settings' | 'all' | 'users' | 'banners' | 'packages' | 'admins';
 
 export const ALL_PERMISSIONS: AdminPermission[] = ['requests', 'tipsters', 'history', 'settings', 'users', 'banners', 'packages', 'admins'];
@@ -23,76 +25,78 @@ export interface AdminEntry {
   created_at: string;
 }
 
-const ADMINS_KEY = 'yallybet_admins';
-const ADMIN_PIN_KEY = 'yallybet_admin_pin';
-
-function getAdminsLocal(): AdminEntry[] {
+export async function fetchAdmins(): Promise<AdminEntry[]> {
   try {
-    return JSON.parse(localStorage.getItem(ADMINS_KEY) || '[]');
+    const r = await api<{ admins: AdminEntry[] }>('/admins');
+    return r.admins;
   } catch {
     return [];
   }
 }
 
-function saveAdminsLocal(admins: AdminEntry[]) {
-  localStorage.setItem(ADMINS_KEY, JSON.stringify(admins));
-}
-
-export async function fetchAdmins(): Promise<AdminEntry[]> {
-  return getAdminsLocal();
-}
-
 export async function getAdminEntry(email: string): Promise<AdminEntry | null> {
-  const admins = getAdminsLocal();
-  return admins.find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
+  const list = await fetchAdmins();
+  return list.find(a => a.email.toLowerCase() === email.toLowerCase()) || null;
 }
 
 export async function isAdmin(email: string): Promise<boolean> {
-  const entry = await getAdminEntry(email);
-  return !!entry;
+  const e = await getAdminEntry(email);
+  return !!e;
 }
 
 export async function addAdmin(email: string, addedBy: string, permissions: AdminPermission[] = ['requests']): Promise<{ success: boolean; error?: string }> {
-  const admins = getAdminsLocal();
-  if (admins.find(a => a.email.toLowerCase() === email.toLowerCase())) {
-    return { success: false, error: 'Email hii ipo tayari!' };
+  try {
+    await api('/admins', { method: 'POST', body: { email, addedBy, permissions } });
+    return { success: true };
+  } catch (e: any) {
+    return { success: false, error: e?.message || 'Imeshindikana' };
   }
-  const entry: AdminEntry = {
-    id: `admin_${Date.now()}`,
-    email: email.toLowerCase(),
-    role: 'admin',
-    permissions,
-    added_by: addedBy,
-    created_at: new Date().toISOString(),
-  };
-  admins.push(entry);
-  saveAdminsLocal(admins);
-  return { success: true };
 }
 
 export async function updateAdminPermissions(adminId: string, permissions: AdminPermission[]): Promise<boolean> {
-  const admins = getAdminsLocal();
-  const idx = admins.findIndex(a => a.id === adminId);
-  if (idx === -1) return false;
-  admins[idx].permissions = permissions;
-  saveAdminsLocal(admins);
-  return true;
+  try {
+    await api(`/admins/${encodeURIComponent(adminId)}/permissions`, { method: 'PUT', body: { permissions } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function removeAdmin(adminId: string): Promise<boolean> {
-  const admins = getAdminsLocal();
-  saveAdminsLocal(admins.filter(a => a.id !== adminId));
-  return true;
+  try {
+    await api(`/admins/${encodeURIComponent(adminId)}`, { method: 'DELETE' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+let pinCache: string | null = null;
+
+export async function loadAdminPin(): Promise<string> {
+  try {
+    const r = await api<{ pin: string }>('/admins/pin');
+    pinCache = r.pin;
+    return r.pin;
+  } catch {
+    return pinCache ?? '1234';
+  }
 }
 
 export function getAdminPin(): string {
-  return localStorage.getItem(ADMIN_PIN_KEY) || '1234';
+  return pinCache ?? '1234';
 }
 
-export function setAdminPin(pin: string) {
-  localStorage.setItem(ADMIN_PIN_KEY, pin);
+export async function setAdminPin(pin: string): Promise<boolean> {
+  try {
+    await api('/admins/pin', { method: 'PUT', body: { pin } });
+    pinCache = pin;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function verifyAdminPin(pin: string): boolean {
-  return getAdminPin() === pin;
+  return (pinCache ?? '1234') === pin;
 }

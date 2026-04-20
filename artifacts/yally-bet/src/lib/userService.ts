@@ -1,3 +1,5 @@
+import { api, setToken, getToken } from './apiClient';
+
 export interface AppUser {
   id: string;
   name: string;
@@ -21,22 +23,7 @@ export interface TicketRequest {
   created_at: string;
 }
 
-const USERS_KEY = 'yallybet_users';
 const SESSION_KEY = 'yallybet_session';
-const UNLOCKED_KEY = 'yallybet_unlocked';
-const REQUESTS_KEY = 'yallybet_requests';
-
-function getUsersLocal(): AppUser[] {
-  try {
-    return JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-
-function saveUsersLocal(users: AppUser[]) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
 
 export function loadSession(): AppUser | null {
   try {
@@ -49,100 +36,117 @@ export function loadSession(): AppUser | null {
 
 export function clearSession() {
   localStorage.removeItem(SESSION_KEY);
+  setToken(null);
 }
 
-// Login using email + password
-export async function loginUser(email: string, password: string): Promise<{ user?: AppUser; error?: string }> {
-  const users = getUsersLocal();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase().trim());
-  if (!user) return { error: 'Email hii haijasajiliwa.' };
-  const stored = localStorage.getItem(`yallybet_pw_${user.id}`);
-  if (stored !== password) return { error: 'Nywila si sahihi.' };
+function saveSession(user: AppUser) {
   localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  return { user };
 }
 
-// Register with name + email + phone (optional) + password
-export async function registerUser(name: string, email: string, phone: string, password: string): Promise<{ user?: AppUser; error?: string; isFirstUser?: boolean }> {
-  const users = getUsersLocal();
-  if (users.find(u => u.email.toLowerCase() === email.toLowerCase().trim())) {
-    return { error: 'Email hii imeshatumika. Jaribu nyingine.' };
+// Try to refresh session from server in background
+export async function refreshSession(): Promise<AppUser | null> {
+  if (!getToken()) return null;
+  try {
+    const r = await api<{ user: AppUser }>('/auth/me');
+    saveSession(r.user);
+    return r.user;
+  } catch {
+    clearSession();
+    return null;
   }
-  const isFirstUser = users.length === 0;
-  const user: AppUser = {
-    id: `u_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-    name: name.trim(),
-    email: email.toLowerCase().trim(),
-    phone: phone.trim(),
-    created_at: new Date().toISOString(),
-  };
-  users.push(user);
-  saveUsersLocal(users);
-  localStorage.setItem(`yallybet_pw_${user.id}`, password);
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  return { user, isFirstUser };
+}
+
+export async function loginUser(email: string, password: string): Promise<{ user?: AppUser; error?: string }> {
+  try {
+    const r = await api<{ user: AppUser; token: string }>('/auth/login', {
+      method: 'POST',
+      body: { email, password },
+    });
+    setToken(r.token);
+    saveSession(r.user);
+    return { user: r.user };
+  } catch (e: any) {
+    return { error: e?.message || 'Imeshindikana kuingia.' };
+  }
+}
+
+export async function registerUser(name: string, email: string, phone: string, password: string): Promise<{ user?: AppUser; error?: string; isFirstUser?: boolean }> {
+  try {
+    const r = await api<{ user: AppUser; token: string }>('/auth/register', {
+      method: 'POST',
+      body: { name, email, phone, password },
+    });
+    setToken(r.token);
+    saveSession(r.user);
+    return { user: r.user, isFirstUser: false };
+  } catch (e: any) {
+    return { error: e?.message || 'Imeshindikana kusajili.' };
+  }
 }
 
 export async function fetchAllUsers(): Promise<AppUser[]> {
-  return getUsersLocal();
-}
-
-export async function deleteUser(userId: string): Promise<boolean> {
-  const users = getUsersLocal();
-  saveUsersLocal(users.filter(u => u.id !== userId));
-  localStorage.removeItem(`yallybet_pw_${userId}`);
-  localStorage.removeItem(`yallybet_unlocked_${userId}`);
-  return true;
-}
-
-export async function saveUnlockedTicket(userId: string, tipsterId: number) {
-  const tickets = await loadUnlockedTickets(userId);
-  if (!tickets.includes(tipsterId)) {
-    tickets.push(tipsterId);
-    localStorage.setItem(`${UNLOCKED_KEY}_${userId}`, JSON.stringify(tickets));
-  }
-}
-
-export async function loadUnlockedTickets(userId: string): Promise<number[]> {
   try {
-    return JSON.parse(localStorage.getItem(`${UNLOCKED_KEY}_${userId}`) || '[]');
+    const r = await api<{ users: AppUser[] }>('/users');
+    return r.users;
   } catch {
     return [];
   }
 }
 
-function getRequests(): TicketRequest[] {
+export async function deleteUser(userId: string): Promise<boolean> {
   try {
-    return JSON.parse(localStorage.getItem(REQUESTS_KEY) || '[]');
+    await api(`/users/${encodeURIComponent(userId)}`, { method: 'DELETE' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function saveUnlockedTicket(_userId: string, _tipsterId: number) {
+  // Server-side: unlocking happens automatically when admin approves request.
+  // No-op kept for compatibility.
+}
+
+export async function loadUnlockedTickets(_userId: string): Promise<number[]> {
+  try {
+    const r = await api<{ tipsterIds: number[] }>('/users/me/unlocked');
+    return r.tipsterIds;
   } catch {
     return [];
   }
 }
 
 export async function fetchAllTicketRequests(): Promise<TicketRequest[]> {
-  return getRequests().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  try {
+    const r = await api<{ requests: TicketRequest[] }>('/requests');
+    return r.requests.map(x => ({ ...x, amount: Number(x.amount) }));
+  } catch {
+    return [];
+  }
 }
 
 export async function createTicketRequest(req: Omit<TicketRequest, 'id' | 'created_at'>): Promise<TicketRequest> {
-  const requests = getRequests();
-  const newReq: TicketRequest = {
-    ...req,
-    id: `req_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-    created_at: new Date().toISOString(),
-  };
-  requests.push(newReq);
-  localStorage.setItem(REQUESTS_KEY, JSON.stringify(requests));
-  return newReq;
+  const r = await api<{ request: TicketRequest }>('/requests', {
+    method: 'POST',
+    body: {
+      tipster_id: req.tipster_id,
+      tipster_name: req.tipster_name,
+      amount: req.amount,
+      payment_number: req.payment_number,
+      payment_method: req.payment_method,
+    },
+  });
+  return { ...r.request, amount: Number(r.request.amount) };
 }
 
 export async function updateTicketStatus(requestId: string, status: 'approved' | 'rejected', tipsterId?: number, userId?: string): Promise<boolean> {
-  const requests = getRequests();
-  const idx = requests.findIndex(r => r.id === requestId);
-  if (idx === -1) return false;
-  requests[idx].status = status;
-  localStorage.setItem(REQUESTS_KEY, JSON.stringify(requests));
-  if (status === 'approved' && tipsterId && userId) {
-    await saveUnlockedTicket(userId, tipsterId);
+  try {
+    await api(`/requests/${encodeURIComponent(requestId)}/status`, {
+      method: 'PUT',
+      body: { status, tipsterId, userId },
+    });
+    return true;
+  } catch {
+    return false;
   }
-  return true;
 }

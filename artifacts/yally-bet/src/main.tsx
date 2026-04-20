@@ -1,9 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { bootstrapSuperAdmin } from "./lib/seed.ts";
+import { refreshSession } from "./lib/userService";
+import { loadAdminPin } from "./lib/adminService";
 
-// Ensure super admin account exists before app renders
-bootstrapSuperAdmin();
+// Refresh server-side session token & cache admin PIN in background.
+refreshSession().catch(() => {});
+loadAdminPin().catch(() => {});
 
 createRoot(document.getElementById("root")!).render(<App />);
