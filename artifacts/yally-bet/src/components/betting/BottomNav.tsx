@@ -13,18 +13,19 @@ interface BottomNavProps {
 
 export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, isAdmin }) => {
   const { t } = useT();
+  const shorten = (s: string, max = 7) => (s.length > max ? s.slice(0, max) : s);
   const tabs: { id: TabType; icon: React.ElementType; label: string; adminOnly?: boolean }[] = [
-    { id: 'home', icon: Home, label: t('nav.home') },
-    { id: 'tickets', icon: Ticket, label: t('nav.tickets') },
-    { id: 'history', icon: History, label: t('nav.history') },
-    { id: 'account', icon: UserCircle, label: t('nav.account') },
-    { id: 'admin', icon: Shield, label: t('nav.admin'), adminOnly: true },
+    { id: 'home', icon: Home, label: shorten(t('nav.home')) },
+    { id: 'tickets', icon: Ticket, label: shorten(t('nav.tickets')) },
+    { id: 'history', icon: History, label: shorten(t('nav.history')) },
+    { id: 'account', icon: UserCircle, label: shorten(t('nav.account')) },
+    { id: 'admin', icon: Shield, label: shorten(t('nav.admin')), adminOnly: true },
   ];
   const visibleTabs = tabs.filter(tab => !tab.adminOnly || isAdmin);
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40">
       <div className="max-w-md mx-auto px-3 pb-3 pt-1">
-        <div className="glass-strong rounded-2xl px-1 py-1.5 flex justify-around items-center relative overflow-hidden">
+        <div className="glass-strong rounded-2xl px-1 py-1.5 flex items-stretch relative overflow-hidden">
           {/* Animated background indicator */}
           {visibleTabs.map((tab, index) => {
             if (activeTab !== tab.id) return null;
@@ -33,12 +34,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, i
               <motion.div
                 key="bg-indicator"
                 layoutId="navBg"
-                className={`absolute h-[calc(100%-8px)] rounded-xl ${
+                className={`absolute top-1 bottom-1 rounded-xl ${
                   isAdminTab ? 'bg-destructive/15 border border-destructive/20' : 'bg-primary/15 border border-primary/20'
                 }`}
                 style={{
-                  width: `${100 / visibleTabs.length - 2}%`,
-                  left: `${(index * 100) / visibleTabs.length + 1}%`,
+                  width: `calc((100% - 8px) / ${visibleTabs.length})`,
+                  left: `calc(4px + (100% - 8px) * ${index} / ${visibleTabs.length})`,
                 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               />
@@ -53,7 +54,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, i
                 key={tab.id}
                 whileTap={{ scale: 0.85 }}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative flex flex-col items-center gap-0.5 px-4 py-2.5 rounded-xl transition-all duration-300 z-10"
+                className="relative flex-1 min-w-0 flex flex-col items-center justify-center gap-0.5 px-1 py-2.5 rounded-xl transition-all duration-300 z-10"
               >
                 <tab.icon
                   size={18}
@@ -64,7 +65,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, i
                       : isActive ? 'text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : 'text-muted-foreground/60'
                   }`}
                 />
-                <span className={`text-[8px] font-black uppercase tracking-widest transition-all duration-300 ${
+                <span className={`text-[8px] font-black uppercase tracking-wider truncate max-w-full transition-all duration-300 ${
                   isAdminTab
                     ? isActive ? 'text-destructive' : 'text-destructive/40'
                     : isActive ? 'text-primary' : 'text-muted-foreground/50'

@@ -26,7 +26,7 @@ const DICTIONARIES: Record<LangCode, Dict> = {
     'app.live': 'Live',
     'nav.home': 'Nyumbani',
     'nav.tickets': 'Tips',
-    'nav.history': 'Zilizoshinda',
+    'nav.history': 'Wins',
     'nav.account': 'Mimi',
     'nav.admin': 'Admin',
     'login.signIn': 'Ingia',
