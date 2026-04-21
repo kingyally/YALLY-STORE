@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedSuperAdmin } from "./lib/seed";
+import { runMigrations } from "./lib/migrate";
 
 const rawPort = process.env["PORT"];
 
@@ -16,7 +17,10 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-seedSuperAdmin().catch((err) => logger.error({ err }, "Seed failed"));
+// Run schema migrations + seed super admin before accepting traffic.
+runMigrations()
+  .then(() => seedSuperAdmin())
+  .catch((err) => logger.error({ err }, "Startup setup failed"));
 
 app.listen(port, (err) => {
   if (err) {
