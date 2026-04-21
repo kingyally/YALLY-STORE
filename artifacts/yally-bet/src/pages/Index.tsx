@@ -45,20 +45,26 @@ const Index = () => {
     const [tipsters, history, packages, appSettings] = await Promise.all([
       fetchTipsters(), fetchHistory(), fetchPackages(), fetchAppSettings(),
     ]);
-    setSettings(prev => ({
-      ...prev,
-      tipsters: tipsters.length > 0 ? tipsters : prev.tipsters,
-      history: history.length > 0 ? history : prev.history,
-      packages: packages.length > 0 ? packages : prev.packages,
-      ...(appSettings ? {
-        telegramChannel: appSettings.telegramChannel,
-        whatsappGroup: appSettings.whatsappGroup,
-        whatsappNumber: appSettings.whatsappNumber,
-        supportEmail: appSettings.supportEmail,
-        paymentNumber: appSettings.paymentNumber,
-        paymentMethods: appSettings.paymentMethods,
-      } : {}),
-    }));
+    setSettings(prev => {
+      const merged: Settings = {
+        ...prev,
+        tipsters: tipsters.length > 0 ? tipsters : prev.tipsters,
+        history: history.length > 0 ? history : prev.history,
+        packages: packages.length > 0 ? packages : prev.packages,
+      };
+      if (appSettings) {
+        // Only overwrite when the DB returned a defined value, so we never wipe defaults.
+        if (appSettings.telegramChannel) merged.telegramChannel = appSettings.telegramChannel;
+        if (appSettings.whatsappGroup) merged.whatsappGroup = appSettings.whatsappGroup;
+        if (appSettings.whatsappNumber) merged.whatsappNumber = appSettings.whatsappNumber;
+        if (appSettings.supportEmail) merged.supportEmail = appSettings.supportEmail;
+        if (appSettings.paymentNumber) merged.paymentNumber = appSettings.paymentNumber;
+        if (Array.isArray(appSettings.paymentMethods) && appSettings.paymentMethods.length > 0) {
+          merged.paymentMethods = appSettings.paymentMethods;
+        }
+      }
+      return merged;
+    });
   };
 
   // Check and set admin status for a user
