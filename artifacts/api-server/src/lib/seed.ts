@@ -13,6 +13,7 @@ const OLD_SUPER_ADMIN_EMAILS = ["seif83470@gmail.com"];
 
 const ALL_PERMISSIONS = [
   "requests",
+  "buying",
   "tipsters",
   "history",
   "settings",
