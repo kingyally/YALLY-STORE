@@ -18,15 +18,23 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 // Run schema migrations + seed super admin before accepting traffic.
-runMigrations()
-  .then(() => seedSuperAdmin())
-  .catch((err) => logger.error({ err }, "Startup setup failed"));
-
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
+async function start() {
+  try {
+    await runMigrations();
+    await seedSuperAdmin();
+  } catch (err) {
+    logger.error({ err }, "Startup setup failed");
     process.exit(1);
   }
 
-  logger.info({ port }, "Server listening");
-});
+  app.listen(port, (err) => {
+    if (err) {
+      logger.error({ err }, "Error listening on port");
+      process.exit(1);
+    }
+
+    logger.info({ port }, "Server listening");
+  });
+}
+
+start();
