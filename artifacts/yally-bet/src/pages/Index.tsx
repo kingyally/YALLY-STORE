@@ -104,7 +104,7 @@ const Index = () => {
           loadUnlockedTickets(currentUser.id).then(setUnlockedTickets);
         }
       }
-    }, 20000);
+    }, 5000);
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {
@@ -279,7 +279,7 @@ const Index = () => {
           )}
           {activeTab === 'admin' && isAdmin && adminEntry && (
             <AdminPanel key="admin" settings={settings} onUpdateSettings={handleUpdateSettings}
-              onExit={() => setActiveTab('home')} adminEntry={adminEntry}
+              onExit={() => { setActiveTab('home'); loadSettingsFromDb(); }} adminEntry={adminEntry}
             />
           )}
         </AnimatePresence>
