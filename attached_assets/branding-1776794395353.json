@@ -1,0 +1,116 @@
+{
+  "colorScheme": "dark",
+  "fonts": [
+    {
+      "family": "Inter",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#0B0E14",
+    "secondary": "#00A3FF",
+    "accent": "#10B981",
+    "background": "#0B0E14",
+    "textPrimary": "#FFFFFF",
+    "link": "#10B981"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Inter",
+      "heading": "Inter"
+    },
+    "fontStacks": {
+      "heading": [
+        "Inter"
+      ],
+      "body": [
+        "Inter",
+        "system-ui",
+        "-apple-system",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Inter"
+      ]
+    },
+    "fontSizes": {
+      "h1": "30px",
+      "h2": "30px",
+      "body": "20px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 12,
+    "borderRadius": "0px"
+  },
+  "components": {
+    "buttonPrimary": {
+      "background": "#10B981",
+      "textColor": "#FFFFFF",
+      "borderRadius": "16px",
+      "borderRadiusCorners": {
+        "topLeft": "16px",
+        "topRight": "16px",
+        "bottomRight": "16px",
+        "bottomLeft": "16px"
+      },
+      "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(16, 185, 129, 0.25) 0px 20px 40px 0px"
+    },
+    "buttonSecondary": {
+      "background": "#0F121A",
+      "textColor": "#FFFFFF",
+      "borderColor": "#171A20",
+      "borderRadius": "16px",
+      "borderRadiusCorners": {
+        "topLeft": "16px",
+        "topRight": "16px",
+        "bottomRight": "16px",
+        "bottomLeft": "16px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": null,
+    "favicon": "https://sonicpesa.com/logo.png",
+    "ogImage": "https://sonicpesa.com/og-image.png"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Start Integration",
+      "reasoning": "Button #0, 'Start Integration', uses a vibrant green color (#10B981) which is the accent color and typically indicates a primary call-to-action. The text is action-oriented, encouraging users to begin the integration process, aligning with primary CTA characteristics."
+    },
+    "secondary": {
+      "index": 2,
+      "text": "Documentation",
+      "reasoning": "Button #2, 'Documentation', has a different background color (#0F121A) and serves a supportive role by providing additional information, making it suitable as a secondary button."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "businesses in Africa"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": false,
+      "llmSucceeded": false,
+      "finalSource": "none"
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}
