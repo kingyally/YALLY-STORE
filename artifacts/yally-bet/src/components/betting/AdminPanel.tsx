@@ -1347,8 +1347,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
                   </label>
                   <input
                     type={field.type}
-                    value={(localSettings as any)[field.key]}
+                    value={(localSettings as any)[field.key] ?? ''}
                     onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
+                    placeholder={field.label}
                     className="w-full bg-card/50 border border-border/50 rounded-xl px-3.5 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
                   />
                 </div>

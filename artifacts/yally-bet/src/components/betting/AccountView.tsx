@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { UserCircle, Shield, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Ticket } from 'lucide-react';
+import { Shield, MessageCircle, Send, Mail, Phone, LogOut, ExternalLink, Crown, Star, Ticket, Globe, Check } from 'lucide-react';
 import { Settings } from '@/types/betting';
+
+const LANGUAGES = [
+  { code: 'sw', name: 'Kiswahili', flag: '🇹🇿', native: 'Kiswahili' },
+  { code: 'en', name: 'English', flag: '🇬🇧', native: 'English' },
+  { code: 'fr', name: 'French', flag: '🇫🇷', native: 'Français' },
+  { code: 'es', name: 'Spanish', flag: '🇪🇸', native: 'Español' },
+  { code: 'ar', name: 'Arabic', flag: '🇸🇦', native: 'العربية' },
+];
 
 interface AccountViewProps {
   userName: string;
@@ -14,6 +22,20 @@ interface AccountViewProps {
 export const AccountView: React.FC<AccountViewProps> = ({
   userName, userPhone, settings, onLogout, unlockedCount = 0
 }) => {
+  const [language, setLanguage] = useState<string>(() => {
+    if (typeof window === 'undefined') return 'sw';
+    return localStorage.getItem('yally_lang') || 'sw';
+  });
+  const [showLangPicker, setShowLangPicker] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('yally_lang', language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+
+  const currentLang = LANGUAGES.find(l => l.code === language) || LANGUAGES[0];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -91,6 +113,60 @@ export const AccountView: React.FC<AccountViewProps> = ({
               <ExternalLink size={12} className="text-muted-foreground/20 group-hover:text-muted-foreground/50 transition-colors" />
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* Language Selector */}
+      <section className="space-y-3">
+        <h3 className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.25em] ml-1 font-display">Lugha · Language</h3>
+        <div className="glass rounded-2xl overflow-hidden">
+          <button
+            onClick={() => setShowLangPicker(v => !v)}
+            className="w-full flex items-center gap-3.5 p-4 hover:bg-secondary/30 transition-all"
+          >
+            <div className="p-2.5 rounded-lg bg-primary/8">
+              <Globe size={16} className="text-primary" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-[12px] font-bold">Chagua Lugha</p>
+              <p className="text-[10px] text-muted-foreground/60 font-medium mt-0.5">
+                {currentLang.flag} {currentLang.native}
+              </p>
+            </div>
+            <span className="text-[9px] text-muted-foreground/40 font-bold uppercase tracking-widest">
+              {showLangPicker ? 'Funga' : 'Badilisha'}
+            </span>
+          </button>
+
+          {showLangPicker && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="border-t border-border/20"
+            >
+              {LANGUAGES.map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => { setLanguage(lang.code); setShowLangPicker(false); }}
+                  className={`w-full flex items-center gap-3 p-3.5 hover:bg-secondary/30 transition-all ${
+                    language === lang.code ? 'bg-primary/8' : ''
+                  }`}
+                >
+                  <span className="text-xl">{lang.flag}</span>
+                  <div className="flex-1 text-left">
+                    <p className="text-[12px] font-bold">{lang.native}</p>
+                    <p className="text-[9px] text-muted-foreground/50 font-medium">{lang.name}</p>
+                  </div>
+                  {language === lang.code && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                      <Check size={12} className="text-primary-foreground" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </motion.div>
+          )}
         </div>
       </section>
 
