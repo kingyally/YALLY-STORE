@@ -36,47 +36,47 @@
 
 :root {
   /* ═══════════════════════════════════════════════════
-     YALLY BET — Royal Violet × Gold × Deep Navy Theme
+     YALLY BET 2.0 — Aurora Violet × Royal Gold Theme
   ═══════════════════════════════════════════════════ */
-  --background: 230 28% 4%;
-  --foreground: 220 30% 95%;
+  --background: 252 35% 4%;
+  --foreground: 240 30% 96%;
 
-  --card: 230 25% 7%;
-  --card-foreground: 220 30% 95%;
+  --card: 252 30% 8%;
+  --card-foreground: 240 30% 96%;
 
-  --popover: 230 25% 7%;
-  --popover-foreground: 220 30% 95%;
+  --popover: 252 30% 8%;
+  --popover-foreground: 240 30% 96%;
 
-  /* Primary: Electric Violet */
-  --primary: 258 88% 66%;
+  /* Primary: Vibrant Aurora Violet */
+  --primary: 263 92% 68%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 230 22% 12%;
-  --secondary-foreground: 220 30% 90%;
+  --secondary: 252 24% 13%;
+  --secondary-foreground: 240 30% 92%;
 
-  --muted: 230 22% 12%;
-  --muted-foreground: 220 15% 48%;
+  --muted: 252 22% 13%;
+  --muted-foreground: 240 12% 55%;
 
-  --accent: 258 88% 66%;
+  --accent: 280 90% 70%;
   --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 84% 60%;
+  --destructive: 0 84% 62%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 230 22% 14%;
-  --input: 230 22% 14%;
-  --ring: 258 88% 66%;
+  --border: 252 24% 16%;
+  --input: 252 24% 16%;
+  --ring: 263 92% 68%;
 
-  --radius: 1rem;
+  --radius: 1.1rem;
 
-  /* ─── Shadows ─── */
-  --shadow-glow:    0 0 55px -12px hsl(258 88% 66% / 0.45);
-  --shadow-glow-sm: 0 0 22px -5px  hsl(258 88% 66% / 0.30);
-  --shadow-card:    0 8px 32px -8px  hsl(0 0% 0% / 0.65);
-  --shadow-elevated:0 20px 60px -15px hsl(0 0% 0% / 0.75);
-  --shadow-inner:   inset 0 1px 0 0  hsl(0 0% 100% / 0.04);
-  --shadow-neon:    0 0 18px -3px hsl(258 88% 66% / 0.55), 0 0 45px -10px hsl(258 88% 66% / 0.30);
-  --shadow-gold:    0 0 20px -5px  hsl(45 100% 55% / 0.40);
+  /* ─── Shadows (richer violet glow) ─── */
+  --shadow-glow:    0 0 65px -10px hsl(263 92% 68% / 0.50);
+  --shadow-glow-sm: 0 0 26px -4px  hsl(263 92% 68% / 0.36);
+  --shadow-card:    0 10px 40px -10px hsl(0 0% 0% / 0.70);
+  --shadow-elevated:0 24px 70px -18px hsl(0 0% 0% / 0.80);
+  --shadow-inner:   inset 0 1px 0 0  hsl(0 0% 100% / 0.05);
+  --shadow-neon:    0 0 22px -3px hsl(263 92% 68% / 0.60), 0 0 50px -10px hsl(280 90% 70% / 0.36);
+  --shadow-gold:    0 0 26px -5px  hsl(45 100% 58% / 0.50);
 }
 
 @layer base {
@@ -91,6 +91,12 @@
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Aurora background — subtle violet glow from top */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, hsl(263 92% 30% / 0.35), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, hsl(280 80% 25% / 0.25), transparent 70%),
+      radial-gradient(ellipse 50% 30% at 0% 100%, hsl(45 80% 30% / 0.10), transparent 70%);
+    background-attachment: fixed;
   }
 
   ::-webkit-scrollbar { width: 4px; }
@@ -99,31 +105,31 @@
 }
 
 @layer utilities {
-  /* ─── Glass effects ─── */
+  /* ─── Glass effects (with subtle violet tint) ─── */
   .glass {
-    backdrop-filter: blur(20px);
-    border: 1px solid hsl(var(--border) / 0.5);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.75), hsl(var(--card) / 0.45));
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid hsl(263 60% 50% / 0.18);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.78), hsl(252 30% 6% / 0.55));
     box-shadow: var(--shadow-inner), var(--shadow-card);
   }
 
   .glass-strong {
-    backdrop-filter: blur(32px);
-    border: 1px solid hsl(var(--border) / 0.6);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.92), hsl(var(--card) / 0.72));
+    backdrop-filter: blur(36px) saturate(200%);
+    border: 1px solid hsl(263 60% 50% / 0.22);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.94), hsl(252 30% 7% / 0.78));
     box-shadow: var(--shadow-inner), var(--shadow-elevated);
   }
 
   .glass-subtle {
-    backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.25);
-    background: hsl(var(--card) / 0.35);
+    backdrop-filter: blur(14px);
+    border: 1px solid hsl(263 60% 50% / 0.10);
+    background: hsl(var(--card) / 0.40);
   }
 
   .glass-premium {
-    backdrop-filter: blur(32px);
-    border: 1px solid hsl(var(--primary) / 0.25);
-    background: linear-gradient(145deg, hsl(var(--card) / 0.82), hsl(var(--primary) / 0.06));
+    backdrop-filter: blur(36px) saturate(200%);
+    border: 1px solid hsl(var(--primary) / 0.32);
+    background: linear-gradient(145deg, hsl(var(--card) / 0.85), hsl(263 92% 30% / 0.10));
     box-shadow: var(--shadow-inner), var(--shadow-card), var(--shadow-glow-sm);
   }
 
