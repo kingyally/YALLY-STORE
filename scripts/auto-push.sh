@@ -26,6 +26,15 @@ if ! git diff --cached --quiet; then
   echo "[$(date '+%H:%M:%S')] Commit: $COMMIT_MSG"
 fi
 
+# Pull remote changes first (rebase to keep history linear) — handles
+# the case where GitHub has commits we don't (e.g. from web edits or deploys).
+GIT_TERMINAL_PROMPT=0 git fetch github ${BRANCH} 2>&1 | tail -3
+GIT_TERMINAL_PROMPT=0 git pull --rebase --autostash github ${BRANCH} 2>&1 | tail -5 || {
+  echo "[$(date '+%H:%M:%S')] Rebase imeshindwa, najaribu merge..."
+  git rebase --abort 2>/dev/null || true
+  GIT_TERMINAL_PROMPT=0 git pull --no-rebase --no-edit --strategy-option=theirs github ${BRANCH} 2>&1 | tail -5
+}
+
 # Push using environment variable for token
 PUSH_OUTPUT=$(GIT_TERMINAL_PROMPT=0 git push github HEAD:${BRANCH} 2>&1)
 PUSH_EXIT=$?
