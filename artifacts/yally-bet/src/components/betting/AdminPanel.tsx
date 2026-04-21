@@ -5,7 +5,7 @@ import {
   History as HistoryIcon, Settings as SettingsIcon, Package, ChevronLeft,
   CheckCircle, XCircle, Crown, Lock, Target, Zap, Users, Eye, Mail, Phone, ShieldCheck, Clock, Ticket,
   Search, MoreVertical, Activity, TrendingUp, AlertCircle, RefreshCw, ToggleLeft, ToggleRight,
-  LayoutDashboard, DollarSign, BarChart3, Trophy
+  LayoutDashboard, DollarSign, BarChart3, Trophy, ShoppingBag
 } from 'lucide-react';
 import { fetchBanners, uploadBannerImage, addBanner as addBannerToDb, updateBanner as updateBannerInDb, deleteBanner as deleteBannerFromDb, type Banner } from '@/lib/bannerService';
 import { Settings, Tipster, History as HistoryType } from '@/types/betting';
@@ -21,7 +21,7 @@ interface AdminPanelProps {
   adminEntry: AdminEntry;
 }
 
-type AdminTab = 'dashboard' | 'users' | 'requests' | 'tipsters' | 'history' | 'settings' | 'packages' | 'banners' | 'admins';
+type AdminTab = 'dashboard' | 'users' | 'requests' | 'buying' | 'tipsters' | 'history' | 'settings' | 'packages' | 'banners' | 'admins';
 
 // Stat card component
 const StatCard: React.FC<{ icon: React.ElementType; label: string; value: string | number; color?: string }> = ({ icon: Icon, label, value, color = 'primary' }) => (
@@ -260,6 +260,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'users', label: 'Watumiaji', icon: Users },
     { id: 'requests', label: 'Maombi', icon: Ticket },
+    { id: 'buying', label: 'Manunuzi', icon: ShoppingBag },
     { id: 'admins', label: 'Admins', icon: ShieldCheck },
     { id: 'tipsters', label: 'Tipsters', icon: UserCog },
     { id: 'history', label: 'Historia', icon: HistoryIcon },
@@ -799,6 +800,112 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
               )}
             </motion.div>
           )}
+
+          {/* =================== BUYING TAB =================== */}
+          {activeTab === 'buying' && (() => {
+            const purchases = ticketRequests.filter(r => r.status === 'approved');
+            const totalRevenue = purchases.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+            const tipsterStats = purchases.reduce((acc, r) => {
+              const key = r.tipster_name || `Tip #${r.tipster_id}`;
+              if (!acc[key]) acc[key] = { count: 0, revenue: 0 };
+              acc[key].count += 1;
+              acc[key].revenue += Number(r.amount) || 0;
+              return acc;
+            }, {} as Record<string, { count: number; revenue: number }>);
+            const topTipsters = Object.entries(tipsterStats)
+              .sort((a, b) => b[1].count - a[1].count)
+              .slice(0, 5);
+
+            return (
+              <motion.div key="buying" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
+                {/* Stats summary */}
+                <div className="flex gap-2">
+                  <StatCard icon={ShoppingBag} label="Manunuzi" value={purchases.length} />
+                  <StatCard icon={DollarSign} label="Mapato (TZS)" value={totalRevenue.toLocaleString()} color="amber-400" />
+                </div>
+
+                {/* Top tipsters card */}
+                {topTipsters.length > 0 && (
+                  <div className="glass rounded-2xl p-4 border border-primary/15">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Trophy size={14} className="text-amber-400" />
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Tips Zinazonunuliwa Zaidi</p>
+                    </div>
+                    <div className="space-y-2">
+                      {topTipsters.map(([name, stats], idx) => (
+                        <div key={name} className="flex items-center justify-between bg-card/30 rounded-xl px-3 py-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`text-[10px] font-black w-5 h-5 rounded-md flex items-center justify-center ${
+                              idx === 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-primary/10 text-primary'
+                            }`}>{idx + 1}</span>
+                            <p className="text-xs font-bold truncate">{name}</p>
+                          </div>
+                          <div className="flex items-center gap-3 flex-shrink-0">
+                            <span className="text-[10px] text-muted-foreground/70">{stats.count}x</span>
+                            <span className="text-[10px] font-black text-amber-400">{stats.revenue.toLocaleString()} TZS</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <SectionHeader title="Tips Zilizonunuliwa" count={purchases.length} onRefresh={loadRequests} loading={loadingRequests} />
+
+                {loadingRequests ? <Loader /> : purchases.length === 0 ? (
+                  <EmptyState icon={ShoppingBag} message="Hakuna manunuzi bado" />
+                ) : (
+                  <div className="space-y-2">
+                    {purchases
+                      .slice()
+                      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                      .map((req, i) => (
+                      <motion.div
+                        key={req.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                        className="glass rounded-2xl p-4 space-y-3 border border-primary/15"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-11 h-11 bg-gradient-to-br from-primary/20 to-amber-500/10 rounded-xl flex items-center justify-center border border-primary/15 flex-shrink-0">
+                              <ShoppingBag size={18} className="text-primary" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-bold truncate">{req.tipster_name || `Tipster #${req.tipster_id}`}</p>
+                              <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1 truncate">
+                                <Users size={10} /> {req.user_name}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-black text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/15 flex-shrink-0">
+                            {Number(req.amount).toLocaleString()} TZS
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-[10px]">
+                          <div className="bg-card/30 rounded-xl px-3 py-2">
+                            <p className="text-muted-foreground/50 mb-0.5">Simu</p>
+                            <p className="font-bold flex items-center gap-1"><Phone size={10} /> {req.user_phone}</p>
+                          </div>
+                          <div className="bg-card/30 rounded-xl px-3 py-2">
+                            <p className="text-muted-foreground/50 mb-0.5">Malipo</p>
+                            <p className="font-bold uppercase">{req.payment_method || '—'}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[9px] text-muted-foreground/60 pt-1">
+                          <span className="flex items-center gap-1"><Clock size={10} /> {new Date(req.created_at).toLocaleString()}</span>
+                          <span className="text-primary font-black uppercase tracking-wider">Imekamilika</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            );
+          })()}
 
           {/* =================== ADMINS TAB =================== */}
           {activeTab === 'admins' && (

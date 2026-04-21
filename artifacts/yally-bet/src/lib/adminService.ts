@@ -1,11 +1,12 @@
 import { api } from './apiClient';
 
-export type AdminPermission = 'requests' | 'tipsters' | 'history' | 'settings' | 'all' | 'users' | 'banners' | 'packages' | 'admins';
+export type AdminPermission = 'requests' | 'buying' | 'tipsters' | 'history' | 'settings' | 'all' | 'users' | 'banners' | 'packages' | 'admins';
 
-export const ALL_PERMISSIONS: AdminPermission[] = ['requests', 'tipsters', 'history', 'settings', 'users', 'banners', 'packages', 'admins'];
+export const ALL_PERMISSIONS: AdminPermission[] = ['requests', 'buying', 'tipsters', 'history', 'settings', 'users', 'banners', 'packages', 'admins'];
 
 export const PERMISSION_LABELS: Record<AdminPermission, string> = {
   requests: 'Maombi ya Malipo',
+  buying: 'Manunuzi (Buying)',
   tipsters: 'Tipsters',
   history: 'Historia',
   settings: 'Mipangilio',
