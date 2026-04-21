@@ -16,8 +16,15 @@ router.use("/auth", authRouter);
 router.use("/users", requireUser, loadAdminContext, usersRouter);
 router.use("/admins", requireUser, loadAdminContext, adminsRouter);
 router.use("/requests", requireUser, loadAdminContext, requestsRouter);
-router.use("/banners", bannersRouter);
-router.use("/content", contentRouter);
+router.use("/banners", requireUser, loadAdminContext, bannersRouter);
+router.use("/content", (req, res, next) => {
+  // GET routes are public; only protect mutations with auth+admin context
+  if (req.method === "GET") return next();
+  return requireUser(req as any, res, (err?: any) => {
+    if (err) return next(err);
+    return loadAdminContext(req as any, res, next);
+  });
+}, contentRouter);
 router.use("/payments", paymentsRouter);
 
 export default router;
