@@ -160,7 +160,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-black uppercase tracking-tight">Lipia Tip</h2>
-              <p className="text-[8px] text-muted-foreground uppercase tracking-widest">SonicPesa · Push USSD</p>
+              <p className="text-[8px] text-muted-foreground uppercase tracking-widest">Malipo Salama · Otomatiki</p>
             </div>
           </div>
           {step !== 4 && (
@@ -202,7 +202,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <div className="glass-subtle rounded-xl p-3.5 flex items-start gap-2">
                 <Zap size={14} className="text-primary flex-shrink-0 mt-0.5" />
                 <p className="text-[10px] text-foreground/80 leading-relaxed">
-                  Malipo otomatiki kupitia <span className="font-bold text-primary">SonicPesa</span> — M-Pesa, Tigo Pesa, HaloPesa & Airtel Money. Ticket itafunguka mara baada ya kulipa.
+                  Malipo otomatiki kupitia <span className="font-bold text-primary">M-Pesa, Tigo Pesa, HaloPesa & Airtel Money</span>. Ticket itafunguka mara baada ya kulipa.
                 </p>
               </div>
 
@@ -274,7 +274,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <Phone className="text-primary" size={28} />
                 </div>
                 <div>
-                  <h3 className="text-base font-black uppercase">Subiri Push USSD</h3>
+                  <h3 className="text-base font-black uppercase">Subiri Ujumbe</h3>
                   <p className="text-[9px] text-muted-foreground/60 uppercase tracking-widest mt-1">
                     Fungua simu yako na ingiza PIN
                   </p>
@@ -282,7 +282,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
 
               <div className="glass-subtle rounded-xl p-4 text-left space-y-2">
-                <p className="text-[10px] text-foreground/80">📱 Ujumbe wa USSD utakuja kwenye <span className="font-bold text-primary">{phone}</span></p>
+                <p className="text-[10px] text-foreground/80">📱 Ujumbe utakuja kwenye <span className="font-bold text-primary">{phone}</span></p>
                 <p className="text-[10px] text-foreground/80">🔑 Ingiza PIN ya mobile money kuhalalisha</p>
                 <p className="text-[10px] text-foreground/80">⚡ Ticket itafunguliwa otomatiki baada ya kulipa</p>
                 {statusMsg && <p className="text-[10px] text-primary/80 pt-1 italic">{statusMsg}</p>}
