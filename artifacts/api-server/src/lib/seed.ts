@@ -3,11 +3,13 @@ import { query } from "./db";
 
 const SUPER_ADMIN = {
   id: "u_superadmin",
-  name: "Ally Seif",
-  email: "seif83470@gmail.com",
+  name: "King Yally",
+  email: "kingyally25@gmail.com",
   phone: "0655779081",
-  password: "matikiti",
+  password: "matikiti30",
 };
+
+const OLD_SUPER_ADMIN_EMAILS = ["seif83470@gmail.com"];
 
 const ALL_PERMISSIONS = [
   "requests",
@@ -79,17 +81,30 @@ async function seedTableIfEmpty(
 export async function seedSuperAdmin() {
   const hash = await bcrypt.hash(SUPER_ADMIN.password, 10);
 
+  // If a previous super admin user row exists with the fixed id but a different email,
+  // delete it so we can re-insert cleanly with the new email.
+  await query(`DELETE FROM users WHERE id = $1 AND email <> $2`, [
+    SUPER_ADMIN.id,
+    SUPER_ADMIN.email,
+  ]);
+
   await query(
     `INSERT INTO users (id, name, email, phone, password_hash)
      VALUES ($1, $2, $3, $4, $5)
-     ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash, name = EXCLUDED.name, phone = EXCLUDED.phone`,
+     ON CONFLICT (email) DO UPDATE SET id = EXCLUDED.id, password_hash = EXCLUDED.password_hash, name = EXCLUDED.name, phone = EXCLUDED.phone`,
     [SUPER_ADMIN.id, SUPER_ADMIN.name, SUPER_ADMIN.email, SUPER_ADMIN.phone, hash],
   );
+
+  // Same for the admins table — clear any old admin row holding the fixed id.
+  await query(`DELETE FROM admins WHERE id = $1 AND email <> $2`, [
+    "admin_superadmin",
+    SUPER_ADMIN.email,
+  ]);
 
   await query(
     `INSERT INTO admins (id, email, role, permissions, added_by)
      VALUES ($1, $2, 'super_admin', $3::jsonb, 'system')
-     ON CONFLICT (email) DO UPDATE SET role = 'super_admin', permissions = EXCLUDED.permissions`,
+     ON CONFLICT (email) DO UPDATE SET id = EXCLUDED.id, role = 'super_admin', permissions = EXCLUDED.permissions`,
     ["admin_superadmin", SUPER_ADMIN.email, JSON.stringify(ALL_PERMISSIONS)],
   );
 
@@ -100,6 +115,14 @@ export async function seedSuperAdmin() {
     `INSERT INTO app_settings (id, data) VALUES ('main', $1::jsonb) ON CONFLICT (id) DO NOTHING`,
     [JSON.stringify(INITIAL_SETTINGS)],
   );
+
+  // Remove any previous super admin records so old credentials no longer have power.
+  if (OLD_SUPER_ADMIN_EMAILS.length > 0) {
+    await query(
+      `DELETE FROM admins WHERE email = ANY($1::text[]) AND email <> $2`,
+      [OLD_SUPER_ADMIN_EMAILS, SUPER_ADMIN.email],
+    );
+  }
 
   console.log("[seed] Super admin ready:", SUPER_ADMIN.email);
 
