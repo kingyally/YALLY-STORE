@@ -287,13 +287,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
   const saveTipster = async (t: Tipster) => {
     await upsertTipster(t);
-    await loadTipstersFromDb();
+    const tips = await fetchTipsters();
+    setLocalSettings(prev => ({ ...prev, tipsters: tips }));
+    onUpdateSettings({ ...localSettings, tipsters: tips });
     setEditingTipster(null);
   };
 
   const deleteTipster = async (id: number) => {
     await deleteTipsterFromDb(id);
-    await loadTipstersFromDb();
+    const tips = await fetchTipsters();
+    setLocalSettings(prev => ({ ...prev, tipsters: tips }));
+    onUpdateSettings({ ...localSettings, tipsters: tips });
   };
 
   const addHistory = () => {
@@ -303,33 +307,43 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
   const saveHistory = async (h: HistoryType) => {
     await upsertHistory(h);
-    await loadHistoryFromDb();
+    const hist = await fetchHistory();
+    setLocalSettings(prev => ({ ...prev, history: hist }));
+    onUpdateSettings({ ...localSettings, history: hist });
     setEditingHistory(null);
   };
 
   const deleteHistory = async (id: number) => {
     await deleteHistoryFromDb(id);
-    await loadHistoryFromDb();
+    const hist = await fetchHistory();
+    setLocalSettings(prev => ({ ...prev, history: hist }));
+    onUpdateSettings({ ...localSettings, history: hist });
   };
 
   const addPackage = async () => {
     const newId = Math.max(0, ...localSettings.packages.map(p => p.id)) + 1;
     const pkg = { id: newId, name: 'Package Mpya', price: 5000, discount: 0 };
     await upsertPackage(pkg);
-    await loadPackagesFromDb();
+    const pkgs = await fetchPackages();
+    setLocalSettings(prev => ({ ...prev, packages: pkgs }));
+    onUpdateSettings({ ...localSettings, packages: pkgs });
   };
 
   const handleUpdatePackage = async (id: number, field: string, value: string | number) => {
     const pkg = localSettings.packages.find(p => p.id === id);
     if (!pkg) return;
     const updated = { ...pkg, [field]: value };
-    setLocalSettings(prev => ({ ...prev, packages: prev.packages.map(p => p.id === id ? updated : p) }));
+    const newPkgs = localSettings.packages.map(p => p.id === id ? updated : p);
+    setLocalSettings(prev => ({ ...prev, packages: newPkgs }));
     await upsertPackage(updated);
+    onUpdateSettings({ ...localSettings, packages: newPkgs });
   };
 
   const deletePackage = async (id: number) => {
     await deletePackageFromDb(id);
-    await loadPackagesFromDb();
+    const pkgs = await fetchPackages();
+    setLocalSettings(prev => ({ ...prev, packages: pkgs }));
+    onUpdateSettings({ ...localSettings, packages: pkgs });
   };
 
   // Banner functions moved to bannerService.ts
