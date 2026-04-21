@@ -92,6 +92,38 @@ const Index = () => {
     loadSettingsFromDb();
   }, []);
 
+  // Auto-refresh: poll every 20s and refetch when tab/app becomes visible,
+  // so admin changes propagate to all devices without manual reload.
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        loadSettingsFromDb();
+        if (currentUser) {
+          loadUnlockedTickets(currentUser.id).then(setUnlockedTickets);
+        }
+      }
+    }, 20000);
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadSettingsFromDb();
+        if (currentUser) {
+          loadUnlockedTickets(currentUser.id).then(setUnlockedTickets);
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('focus', onVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('focus', onVisibility);
+    };
+  }, [isLoggedIn, currentUser]);
+
   const handleLoginSuccess = async (user: AppUser, isFirstUser = false) => {
     setCurrentUser(user);
     setIsLoggedIn(true);
