@@ -89,7 +89,20 @@ router.post("/sonicpesa/create", requireUser, async (req: AuthedRequest, res: Re
 
     if (!r.ok || json?.status !== "success" || !json?.data?.order_id) {
       logger.warn({ status: r.status, body: text }, "SonicPesa create_order failed");
-      res.status(502).json({ error: json?.message || "Imeshindwa kuanzisha malipo. Jaribu tena." });
+      const code = String(json?.resultcode || json?.data?.resultcode || "");
+      const rawMsg = String(json?.message || json?.data?.message || "");
+      // Translate common SonicPesa error codes to clear Swahili
+      let friendly = rawMsg;
+      if (code === "9009" || /balance.*not enough/i.test(rawMsg)) {
+        friendly = "Salio la simu yako halitoshi. Tafadhali ongeza salio kisha jaribu tena.";
+      } else if (/invalid.*phone|phone.*invalid/i.test(rawMsg)) {
+        friendly = "Namba ya simu si sahihi. Tumia namba ya M-Pesa, Tigo, Halo au Airtel inayotumika.";
+      } else if (/timeout/i.test(rawMsg)) {
+        friendly = "Mtandao wa malipo umechelewa. Jaribu tena baada ya sekunde chache.";
+      } else if (!friendly) {
+        friendly = "Imeshindwa kuanzisha malipo. Hakikisha namba ni sahihi na una salio.";
+      }
+      res.status(400).json({ error: friendly, code });
       return;
     }
 
