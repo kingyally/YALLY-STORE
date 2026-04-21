@@ -67,10 +67,10 @@ export const AccountView: React.FC<AccountViewProps> = ({
         <h3 className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.25em] ml-1 font-display">Support & Links</h3>
         <div className="glass rounded-2xl overflow-hidden noise-texture">
           {[
-            { href: settings.whatsappGroup, icon: MessageCircle, label: 'WhatsApp Group', color: 'text-primary', bg: 'bg-primary/8' },
-            { href: settings.telegramChannel, icon: Send, label: 'Telegram Channel', color: 'text-blue-400', bg: 'bg-blue-500/8' },
-            { href: `https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, '')}`, icon: Phone, label: 'Admin WhatsApp', sub: settings.whatsappNumber, color: 'text-primary', bg: 'bg-primary/8' },
-            { href: `mailto:${settings.supportEmail}`, icon: Mail, label: 'Support Email', sub: settings.supportEmail, color: 'text-rose-400', bg: 'bg-rose-500/8' },
+            { href: settings.whatsappGroup || '#', icon: MessageCircle, label: 'WhatsApp Group', color: 'text-primary', bg: 'bg-primary/8' },
+            { href: settings.telegramChannel || '#', icon: Send, label: 'Telegram Channel', color: 'text-blue-400', bg: 'bg-blue-500/8' },
+            { href: `https://wa.me/${(settings.whatsappNumber || '').replace(/[^0-9]/g, '')}`, icon: Phone, label: 'Admin WhatsApp', sub: settings.whatsappNumber || '', color: 'text-primary', bg: 'bg-primary/8' },
+            { href: `mailto:${settings.supportEmail || ''}`, icon: Mail, label: 'Support Email', sub: settings.supportEmail || '', color: 'text-rose-400', bg: 'bg-rose-500/8' },
           ].map((item, i, arr) => (
             <a
               key={i}
