@@ -139,6 +139,39 @@ export async function createTicketRequest(req: Omit<TicketRequest, 'id' | 'creat
   return { ...r.request, amount: Number(r.request.amount) };
 }
 
+export interface SonicCreateResp {
+  order_id: string;
+  reference?: string | null;
+  status: string;
+  message?: string;
+}
+
+export async function sonicpesaCreateOrder(input: {
+  tipster_id: number;
+  tipster_name: string;
+  amount: number;
+  phone: string;
+}): Promise<{ data?: SonicCreateResp; error?: string }> {
+  try {
+    const r = await api<SonicCreateResp>('/payments/sonicpesa/create', {
+      method: 'POST',
+      body: input,
+    });
+    return { data: r };
+  } catch (e: any) {
+    return { error: e?.message || 'Imeshindwa kuanzisha malipo.' };
+  }
+}
+
+export async function sonicpesaCheckStatus(orderId: string): Promise<{ status: string; order?: any; error?: string }> {
+  try {
+    const r = await api<{ status: string; order: any }>(`/payments/sonicpesa/status/${encodeURIComponent(orderId)}`);
+    return { status: r.status, order: r.order };
+  } catch (e: any) {
+    return { status: 'PENDING', error: e?.message };
+  }
+}
+
 export async function updateTicketStatus(requestId: string, status: 'approved' | 'rejected', tipsterId?: number, userId?: string): Promise<boolean> {
   try {
     await api(`/requests/${encodeURIComponent(requestId)}/status`, {

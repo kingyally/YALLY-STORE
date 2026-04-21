@@ -85,10 +85,31 @@ CREATE TABLE IF NOT EXISTS admin_pin (
   pin VARCHAR DEFAULT '1234'
 );
 
+CREATE TABLE IF NOT EXISTS payment_orders (
+  order_id VARCHAR PRIMARY KEY,
+  user_id VARCHAR NOT NULL,
+  user_name VARCHAR DEFAULT '',
+  user_email VARCHAR DEFAULT '',
+  user_phone VARCHAR DEFAULT '',
+  tipster_id INTEGER NOT NULL,
+  tipster_name VARCHAR DEFAULT '',
+  amount NUMERIC NOT NULL,
+  currency VARCHAR DEFAULT 'TZS',
+  status VARCHAR DEFAULT 'PENDING',
+  channel VARCHAR DEFAULT '',
+  reference VARCHAR DEFAULT '',
+  transid VARCHAR DEFAULT '',
+  provider VARCHAR DEFAULT 'sonicpesa',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_requests_user ON ticket_requests(user_id);
 CREATE INDEX IF NOT EXISTS idx_requests_status ON ticket_requests(status);
 CREATE INDEX IF NOT EXISTS idx_unlocked_user ON unlocked_tickets(user_id);
+CREATE INDEX IF NOT EXISTS idx_payment_orders_user ON payment_orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_payment_orders_status ON payment_orders(status);
 `;
 
 export async function runMigrations() {

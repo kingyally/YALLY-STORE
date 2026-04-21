@@ -6,6 +6,7 @@ import adminsRouter from "./admins";
 import requestsRouter from "./requests";
 import bannersRouter from "./banners";
 import contentRouter from "./content";
+import paymentsRouter from "./payments";
 import { loadAdminContext, requireUser } from "../lib/auth";
 
 const router: IRouter = Router();
@@ -17,5 +18,6 @@ router.use("/admins", requireUser, loadAdminContext, adminsRouter);
 router.use("/requests", requireUser, loadAdminContext, requestsRouter);
 router.use("/banners", bannersRouter);
 router.use("/content", contentRouter);
+router.use("/payments", paymentsRouter);
 
 export default router;
