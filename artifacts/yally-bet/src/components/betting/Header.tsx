@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Bell, Wifi } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import matrixLogo from '@/assets/yally-logo.svg';
+import { useT } from '@/lib/i18n';
 
 interface HeaderProps {
   userName?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({ userName }) => {
+  const { t } = useT();
   const [showNotif, setShowNotif] = useState(false);
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 60000);
-    return () => clearInterval(t);
+    const id = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(id);
   }, []);
 
   return (
@@ -29,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({ userName }) => {
           </h1>
           <div className="flex items-center gap-1.5 -mt-0.5">
             <Wifi size={8} className="text-primary" />
-            <p className="text-[7px] font-bold text-muted-foreground uppercase tracking-[0.25em]">Live • {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="text-[7px] font-bold text-muted-foreground uppercase tracking-[0.25em]">{t('app.live')} • {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
           </div>
         </div>
       </div>
@@ -60,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ userName }) => {
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             className="absolute top-full right-4 mt-2 w-72 glass-strong rounded-2xl p-4 space-y-3 z-50"
           >
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Arifa</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('common.notif')}</h3>
             {[
               { text: '🔥 Tips mpya za usiku zimepost!', time: 'Sasa hivi' },
               { text: '✅ Tip yako ya jana imeshinda!', time: 'Masaa 2 yaliyopita' },

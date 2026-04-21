@@ -13,6 +13,7 @@ import { CATEGORIES } from '@/constants/betting';
 import { fetchAllUsers, deleteUser as deleteUserFromDb, AppUser, fetchAllTicketRequests, updateTicketStatus, TicketRequest } from '@/lib/userService';
 import { fetchAdmins, addAdmin, removeAdmin, updateAdminPermissions, AdminEntry, ALL_PERMISSIONS, PERMISSION_LABELS, type AdminPermission } from '@/lib/adminService';
 import { fetchTipsters, upsertTipster, deleteTipsterFromDb, fetchHistory, upsertHistory, deleteHistoryFromDb, fetchPackages, upsertPackage, deletePackageFromDb, fetchAppSettings, updateAppSettings, type AppSettings } from '@/lib/settingsService';
+import { useT, LANGUAGES } from '@/lib/i18n';
 
 interface AdminPanelProps {
   settings: Settings;
@@ -89,6 +90,7 @@ const Loader = () => (
 );
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettings, onExit, adminEntry }) => {
+  const { lang: appLang, setLang: setAppLang, t: tt } = useT();
   const isSuperAdmin = adminEntry.role === 'super_admin';
   const myPermissions = isSuperAdmin ? [...ALL_PERMISSIONS] : adminEntry.permissions;
   const firstTab = (isSuperAdmin ? 'dashboard' : myPermissions[0] || 'requests') as AdminTab;
@@ -1331,7 +1333,36 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
           {/* =================== SETTINGS TAB =================== */}
           {activeTab === 'settings' && (
             <motion.div key="settings" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-              <SectionHeader title="App Settings" />
+              <SectionHeader title={tt('admin.settings')} />
+
+              {/* Language Selector — applies app-wide */}
+              <div className="glass rounded-2xl p-4 space-y-3">
+                <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest">
+                  🌍 {tt('admin.languageDefault')}
+                </label>
+                <p className="text-[9px] text-muted-foreground/40 leading-relaxed">{tt('admin.languageHint')}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {LANGUAGES.map(l => (
+                    <motion.button
+                      key={l.code}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setAppLang(l.code)}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[11px] font-bold transition-all ${
+                        appLang === l.code
+                          ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/20'
+                          : 'bg-card/50 border border-border/50 text-muted-foreground/80 hover:border-border'
+                      }`}
+                    >
+                      <span className="text-base">{l.flag}</span>
+                      <div className="flex-1 text-left">
+                        <div className="leading-tight">{l.native}</div>
+                        <div className="text-[8px] opacity-60 font-medium">{l.name}</div>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
 
               {[
                 { key: 'paymentNumber', label: 'Namba ya Malipo', type: 'text', icon: Phone },

@@ -4,6 +4,7 @@ import { X, Phone, Shield, CheckCircle, Check, ArrowRight, AlertCircle, Loader2,
 import { Tipster } from '@/types/betting';
 import { toast } from 'sonner';
 import { sonicpesaCreateOrder, sonicpesaCheckStatus } from '@/lib/userService';
+import { useT } from '@/lib/i18n';
 
 interface PaymentModalProps {
   tipster: Tipster;
@@ -22,6 +23,7 @@ type Step = 1 | 2 | 3 | 4;
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   tipster, onClose, onSuccess, userPhone
 }) => {
+  const { t } = useT();
   const [phone, setPhone] = useState(userPhone || '');
   const [step, setStep] = useState<Step>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -159,8 +161,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <Shield size={16} className="text-primary" />
             </div>
             <div>
-              <h2 className="text-base font-black uppercase tracking-tight">Lipia Tip</h2>
-              <p className="text-[8px] text-muted-foreground uppercase tracking-widest">Malipo Salama · Otomatiki</p>
+              <h2 className="text-base font-black uppercase tracking-tight">{t('pay.title')}</h2>
+              <p className="text-[8px] text-muted-foreground uppercase tracking-widest">{t('pay.subtitle')}</p>
             </div>
           </div>
           {step !== 4 && (
@@ -208,7 +210,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
               <motion.button whileTap={{ scale: 0.97 }} onClick={() => setStep(2)}
                 className="w-full py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-black rounded-xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
-                Endelea <ArrowRight size={14} />
+                {t('common.continue')} <ArrowRight size={14} />
               </motion.button>
             </motion.div>
           )}
@@ -218,17 +220,17 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
               <div className="glass-subtle rounded-xl p-4 space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] text-muted-foreground uppercase tracking-widest">Tipster</span>
+                  <span className="text-[9px] text-muted-foreground uppercase tracking-widest">{t('pay.tipster')}</span>
                   <span className="text-xs font-black">{tipster.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-[9px] text-muted-foreground uppercase tracking-widest">Kiasi</span>
+                  <span className="text-[9px] text-muted-foreground uppercase tracking-widest">{t('pay.amount')}</span>
                   <span className="text-base font-black text-primary">TSH {finalPrice.toLocaleString()}</span>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">Namba ya Simu (M-Pesa/Tigo/Airtel/Halo)</label>
+                <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em]">{t('pay.phoneLabel')}</label>
                 <div className="relative">
                   <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/50" />
                   <input type="tel" placeholder="0712345678" value={phone}
@@ -253,12 +255,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
               <div className="flex gap-2">
                 <button onClick={() => setStep(1)} className="flex-1 py-3 rounded-xl border border-border/50 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
-                  Rudi
+                  {t('common.back')}
                 </button>
                 <motion.button whileTap={{ scale: 0.97 }} onClick={handleStartPayment} disabled={isSubmitting}
                   className="flex-1 py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-black rounded-xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-60">
                   {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />}
-                  {isSubmitting ? 'Inatuma...' : 'Lipa Sasa'}
+                  {isSubmitting ? t('pay.sending') : t('pay.payNow')}
                 </motion.button>
               </div>
             </motion.div>
@@ -274,9 +276,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <Phone className="text-primary" size={28} />
                 </div>
                 <div>
-                  <h3 className="text-base font-black uppercase">Subiri Ujumbe</h3>
+                  <h3 className="text-base font-black uppercase">{t('pay.waitTitle')}</h3>
                   <p className="text-[9px] text-muted-foreground/60 uppercase tracking-widest mt-1">
-                    Fungua simu yako na ingiza PIN
+                    {t('pay.waitSub')}
                   </p>
                 </div>
               </div>
@@ -298,12 +300,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <div className="flex gap-2">
                 <button onClick={handleCloseAttempt}
                   className="flex-1 py-3 rounded-xl border border-border/50 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
-                  Funga
+                  {t('common.close')}
                 </button>
                 <button onClick={handleManualRecheck}
                   className="flex-1 py-3 bg-primary/15 border border-primary/30 text-primary font-black rounded-xl text-[11px] uppercase tracking-widest flex items-center justify-center gap-2">
                   <Loader2 size={12} className={pollRef.current ? 'animate-spin' : ''} />
-                  Angalia Tena
+                  {t('pay.recheck')}
                 </button>
               </div>
             </motion.div>
@@ -317,13 +319,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   <CheckCircle className="text-primary" size={36} />
                 </div>
                 <div>
-                  <h3 className="text-base font-black uppercase">Malipo Yamefanikiwa!</h3>
-                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-widest mt-1">Ticket imefunguliwa 🎉</p>
+                  <h3 className="text-base font-black uppercase">{t('pay.success')}</h3>
+                  <p className="text-[9px] text-muted-foreground/60 uppercase tracking-widest mt-1">{t('pay.successSub')}</p>
                 </div>
               </div>
               <motion.button whileTap={{ scale: 0.97 }} onClick={onClose}
                 className="w-full py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-black rounded-xl text-[11px] uppercase tracking-widest">
-                Fungua Ticket
+                {t('pay.openTicket')}
               </motion.button>
             </motion.div>
           )}

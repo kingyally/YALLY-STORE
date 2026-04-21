@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Trophy, TrendingUp, Users, Sparkles, ArrowRight, User, Phone, Mail, KeyRound, Shield, Star, Zap } from 'lucide-react';
 import loginBg from '@/assets/login-bg.jpg';
 import matrixLogo from '@/assets/yally-logo.svg';
+import { useT } from '@/lib/i18n';
 
 interface LoginScreenProps {
   loginName: string;
@@ -24,6 +25,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
   setLoginName, setLoginEmail, setLoginPhone, setLoginPassword,
   onLogin, onRegister, isLoading, loginError
 }) => {
+  const { t } = useT();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
 
   const handleSubmit = () => {
@@ -65,7 +67,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               YALLY<span className="text-gradient-emerald">.</span>BET
             </h1>
             <p className="text-muted-foreground/60 text-[9px] font-bold uppercase tracking-[0.35em] mt-1.5">
-              Tanzania's #1 Betting Tips Platform
+              {t('app.tagline')}
             </p>
           </div>
         </div>
@@ -73,9 +75,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         {/* Stats */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-center gap-2">
           {[
-            { icon: Trophy,      value: '98%',   label: 'Win Rate',   color: 'text-primary',     bg: 'bg-primary/8 border-primary/15' },
-            { icon: Users,       value: '14.2k', label: 'Members',    color: 'text-blue-400',    bg: 'bg-blue-500/8 border-blue-500/15' },
-            { icon: TrendingUp,  value: '450+',  label: 'Daily Odds', color: 'text-amber-400',   bg: 'bg-amber-500/8 border-amber-500/15' },
+            { icon: Trophy,      value: '98%',   label: t('login.winRate'),   color: 'text-primary',     bg: 'bg-primary/8 border-primary/15' },
+            { icon: Users,       value: '14.2k', label: t('login.members'),    color: 'text-blue-400',    bg: 'bg-blue-500/8 border-blue-500/15' },
+            { icon: TrendingUp,  value: '450+',  label: t('login.dailyOdds'), color: 'text-amber-400',   bg: 'bg-amber-500/8 border-amber-500/15' },
           ].map((s, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
               className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl glass-subtle border ${s.bg}`}
@@ -112,13 +114,13 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             className={`flex-1 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
               !isRegisterMode ? 'btn-primary-premium text-primary-foreground' : 'text-muted-foreground/50 hover:text-muted-foreground'
             }`}
-          >Ingia</button>
+          >{t('login.signIn')}</button>
           <button
             onClick={() => setIsRegisterMode(true)}
             className={`flex-1 py-3 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
               isRegisterMode ? 'btn-primary-premium text-primary-foreground' : 'text-muted-foreground/50 hover:text-muted-foreground'
             }`}
-          >Jisajili</button>
+          >{t('login.signUp')}</button>
         </div>
 
         {/* Form */}
@@ -130,7 +132,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <User size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
               <input
                 type="text"
-                placeholder="Jina lako kamili"
+                placeholder={t('login.namePh')}
                 value={loginName}
                 onChange={(e) => setLoginName(e.target.value)}
                 className="w-full glass-subtle border-border/30 rounded-xl pl-11 pr-4 py-3.5 text-foreground placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all text-sm font-medium"
@@ -143,7 +145,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <Mail size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
             <input
               type="email"
-              placeholder="Email yako"
+              placeholder={t('login.emailPh')}
               value={loginEmail}
               onChange={(e) => setLoginEmail(e.target.value)}
               className="w-full glass-subtle border-border/30 rounded-xl pl-11 pr-4 py-3.5 text-foreground placeholder:text-muted-foreground/30 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 outline-none transition-all text-sm font-medium"
@@ -156,7 +158,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
               <Phone size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
               <input
                 type="tel"
-                placeholder="Namba ya simu (07xxxxxxxx)"
+                placeholder={t('login.phonePh')}
                 value={loginPhone}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[^0-9+]/g, '');
@@ -173,7 +175,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             <KeyRound size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/40" />
             <input
               type="password"
-              placeholder="Password yako"
+              placeholder={t('login.passwordPh')}
               value={loginPassword}
               onChange={(e) => setLoginPassword(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
@@ -200,14 +202,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
             ) : (
-              <>{isRegisterMode ? 'Jisajili Sasa' : 'Ingia Sasa'}<ArrowRight size={16} /></>
+              <>{isRegisterMode ? t('login.signUpNow') : t('login.signInNow')}<ArrowRight size={16} /></>
             )}
           </motion.button>
 
           <div className="flex items-center gap-3 pt-1">
             <div className="h-px flex-1 bg-border/30" />
             <p className="text-muted-foreground/30 text-[9px] font-medium">
-              {isRegisterMode ? 'Una account? Bonyeza "Ingia"' : 'Huna account? Bonyeza "Jisajili"'}
+              {isRegisterMode ? t('login.haveAccount') : t('login.noAccount')}
             </p>
             <div className="h-px flex-1 bg-border/30" />
           </div>
@@ -216,9 +218,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         {/* Trust indicators */}
         <div className="flex items-center justify-center gap-4 pt-2">
           {[
-            { icon: Shield, text: 'Salama' },
-            { icon: Zap, text: 'Haraka' },
-            { icon: Star, text: 'Bure Kujiandikisha' },
+            { icon: Shield, text: t('login.safe') },
+            { icon: Zap, text: t('login.fast') },
+            { icon: Star, text: t('login.freeJoin') },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-1">
               <item.icon size={9} className="text-primary/50" />

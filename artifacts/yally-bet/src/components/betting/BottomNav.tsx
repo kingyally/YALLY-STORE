@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Home, Ticket, History, UserCircle, Shield } from 'lucide-react';
+import { useT } from '@/lib/i18n';
 
 type TabType = 'home' | 'tickets' | 'history' | 'account' | 'admin';
 
@@ -10,16 +11,16 @@ interface BottomNavProps {
   isAdmin?: boolean;
 }
 
-const tabs: { id: TabType; icon: React.ElementType; label: string; adminOnly?: boolean }[] = [
-  { id: 'home', icon: Home, label: 'Home' },
-  { id: 'tickets', icon: Ticket, label: 'Tips' },
-  { id: 'history', icon: History, label: 'Won' },
-  { id: 'account', icon: UserCircle, label: 'Me' },
-  { id: 'admin', icon: Shield, label: 'Admin', adminOnly: true },
-];
-
 export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, isAdmin }) => {
-  const visibleTabs = tabs.filter(t => !t.adminOnly || isAdmin);
+  const { t } = useT();
+  const tabs: { id: TabType; icon: React.ElementType; label: string; adminOnly?: boolean }[] = [
+    { id: 'home', icon: Home, label: t('nav.home') },
+    { id: 'tickets', icon: Ticket, label: t('nav.tickets') },
+    { id: 'history', icon: History, label: t('nav.history') },
+    { id: 'account', icon: UserCircle, label: t('nav.account') },
+    { id: 'admin', icon: Shield, label: t('nav.admin'), adminOnly: true },
+  ];
+  const visibleTabs = tabs.filter(tab => !tab.adminOnly || isAdmin);
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40">
       <div className="max-w-md mx-auto px-3 pb-3 pt-1">
