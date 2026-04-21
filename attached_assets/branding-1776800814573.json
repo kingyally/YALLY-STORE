@@ -1,0 +1,147 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Segoe UI",
+      "role": "body"
+    },
+    {
+      "family": "Roboto",
+      "role": "body"
+    },
+    {
+      "family": "Helvetica Neue",
+      "role": "body"
+    },
+    {
+      "family": "Noto Sans",
+      "role": "body"
+    },
+    {
+      "family": "Arial",
+      "role": "body"
+    }
+  ],
+  "colors": {
+    "primary": "#3A80EA",
+    "secondary": "#6C757D",
+    "accent": "#3A80EA",
+    "background": "#FFFFFF",
+    "textPrimary": "#212529",
+    "link": "#DC3545"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Segoe UI",
+      "heading": "Segoe UI"
+    },
+    "fontStacks": {
+      "heading": [
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Noto Sans",
+        "Liberation Sans",
+        "Arial",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Noto Color Emoji"
+      ],
+      "body": [
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Noto Sans",
+        "Liberation Sans",
+        "Arial",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Noto Color Emoji"
+      ],
+      "paragraph": [
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Noto Sans",
+        "Liberation Sans",
+        "Arial",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Noto Color Emoji"
+      ]
+    },
+    "fontSizes": {
+      "h1": "16px",
+      "h2": "16px",
+      "body": "16px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 8,
+    "borderRadius": "0px"
+  },
+  "components": {
+    "buttonPrimary": {
+      "background": "#FFFFFF",
+      "textColor": "#3A80EA",
+      "borderColor": "#3A80EA",
+      "borderRadius": "4px",
+      "borderRadiusCorners": {
+        "topLeft": "4px",
+        "topRight": "4px",
+        "bottomRight": "4px",
+        "bottomLeft": "4px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": null,
+    "favicon": "https://postimgs.org/favicon.ico",
+    "ogImage": "File saved at: attached_assets/ogImage.jpg"
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 2,
+      "text": "Download original image",
+      "reasoning": "Button #2, 'Download original image', has a vibrant blue text color (#3A80EA) and is outlined, making it stand out as a primary action. The text is action-oriented, encouraging users to download, which is a strong CTA."
+    },
+    "secondary": {
+      "index": 3,
+      "text": "Report abuse",
+      "reasoning": "Button #3, 'Report abuse', has a different background color (#FFFFFF) and a more subdued text color (#6C757D). It serves a secondary function, providing a less prominent action compared to downloading."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "professional",
+    "energy": "medium",
+    "targetAudience": "general users looking for image hosting"
+  },
+  "designSystem": {
+    "framework": "bootstrap",
+    "componentLibrary": ""
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  },
+  "__llm_metadata": {
+    "logoSelection": {
+      "llmCalled": false,
+      "llmSucceeded": false,
+      "finalSource": "none"
+    },
+    "buttonClassification": {
+      "llmCalled": true,
+      "llmSucceeded": true
+    }
+  }
+}

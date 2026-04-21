@@ -98,10 +98,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         return;
       }
       setOrderId(r.data.order_id);
-      setStatusMsg(r.data.message || 'Push USSD imetumwa kwenye simu yako.');
+      setStatusMsg('Ujumbe wa malipo umetumwa kwenye simu yako.');
       setStep(3);
       startPolling(r.data.order_id);
-      toast.success('Push USSD imetumwa! Fungua simu na ingiza PIN.');
+      toast.success('Ujumbe umetumwa! Fungua simu na ingiza PIN.');
     } catch {
       toast.error('Tatizo la mtandao. Jaribu tena.');
       setErrorMsg('Tatizo la mtandao.');

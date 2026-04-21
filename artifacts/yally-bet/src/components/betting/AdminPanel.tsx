@@ -278,7 +278,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
     const newId = Math.max(0, ...localSettings.tipsters.map(t => t.id)) + 1;
     setEditingTipster({
       id: newId, name: 'Tipster Mpya', category: 'VIP TICKET', odds: '10.00',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100',
+      avatar: 'https://i.postimg.cc/zvrzfcXX/IMG-20260216-WA0222.jpg',
       code: `TIP-${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
       isFree: false, expiryTime: 12000,
       prices: [{ name: 'Siku 1', p: 2000, discount: 0 }],
