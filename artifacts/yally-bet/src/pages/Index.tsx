@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { LoginScreen } from '@/components/betting/LoginScreen';
 import { Header } from '@/components/betting/Header';
@@ -7,8 +7,16 @@ import { HomeView } from '@/components/betting/HomeView';
 import { TicketsView } from '@/components/betting/TicketsView';
 import { HistoryView } from '@/components/betting/HistoryView';
 import { AccountView } from '@/components/betting/AccountView';
-import { PaymentModal } from '@/components/betting/PaymentModal';
-import { AdminPanel } from '@/components/betting/AdminPanel';
+
+// Lazy-load heavy components to keep first paint snappy
+const PaymentModal = lazy(() => import('@/components/betting/PaymentModal').then(m => ({ default: m.PaymentModal })));
+const AdminPanel = lazy(() => import('@/components/betting/AdminPanel').then(m => ({ default: m.AdminPanel })));
+
+const LazyFallback = () => (
+  <div className="flex items-center justify-center py-10">
+    <div className="w-6 h-6 border-[3px] border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
 import { getAdminEntry, addAdmin, ALL_PERMISSIONS, type AdminEntry } from '@/lib/adminService';
 import { Tipster, Settings } from '@/types/betting';
 import { DEFAULT_SETTINGS } from '@/constants/betting';
@@ -278,9 +286,11 @@ const Index = () => {
             />
           )}
           {activeTab === 'admin' && isAdmin && adminEntry && (
-            <AdminPanel key="admin" settings={settings} onUpdateSettings={handleUpdateSettings}
-              onExit={() => { setActiveTab('home'); loadSettingsFromDb(); }} adminEntry={adminEntry}
-            />
+            <Suspense key="admin" fallback={<LazyFallback />}>
+              <AdminPanel settings={settings} onUpdateSettings={handleUpdateSettings}
+                onExit={() => { setActiveTab('home'); loadSettingsFromDb(); }} adminEntry={adminEntry}
+              />
+            </Suspense>
           )}
         </AnimatePresence>
       </main>
@@ -289,6 +299,7 @@ const Index = () => {
 
       <AnimatePresence>
         {showPaymentModal && selectedTipster && (
+          <Suspense fallback={<LazyFallback />}>
           <PaymentModal tipster={selectedTipster}
             onClose={() => { setShowPaymentModal(false); setSelectedTipster(null); }}
             onSuccess={handlePaymentSuccess}
@@ -299,6 +310,7 @@ const Index = () => {
             userEmail={currentUser?.email}
             userPhone={currentUser?.phone}
           />
+          </Suspense>
         )}
       </AnimatePresence>
     </div>
