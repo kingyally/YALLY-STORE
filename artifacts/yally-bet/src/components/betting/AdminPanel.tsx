@@ -206,7 +206,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
   const handleDeleteBanner = async (banner: Banner) => {
     if (!confirm('Futa banner hii?')) return;
-    await deleteBannerFromDb(banner.id, banner.image_url);
+    await deleteBannerFromDb(banner.id);
     await loadBanners();
   };
 
