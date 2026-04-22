@@ -151,7 +151,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <div className="grid grid-cols-3 gap-2 px-4">
         {[
           { icon: Trophy, label: 'Wins Leo', value: String(wonCount), color: 'text-primary', glow: 'bg-primary/8 border-primary/10' },
-          { icon: BarChart3, label: 'Win Rate', value: `${winRate}%`, color: 'text-amber-400', glow: 'bg-amber-500/8 border-amber-500/10' },
+          { icon: BarChart3, label: 'Win Rate', value: settings.winRatePct || `${winRate}%`, color: 'text-amber-400', glow: 'bg-amber-500/8 border-amber-500/10' },
           { icon: Users, label: 'Online', value: onlineCount.toLocaleString(), color: 'text-blue-400', glow: 'bg-blue-500/8 border-blue-500/10' },
         ].map((stat, i) => (
           <motion.div
@@ -286,7 +286,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <div className="mx-4 flex items-center justify-center gap-4 py-2">
         {[
           { icon: Shield, text: 'Malipo Salama' },
-          { icon: Star, text: '98% Win Rate' },
+          { icon: Star, text: `${settings.winRatePct || '98%'} Win Rate` },
           { icon: Gift, text: 'Free Tips' },
         ].map((item, i) => (
           <div key={i} className="flex items-center gap-1">

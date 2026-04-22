@@ -6,9 +6,10 @@ import { useT } from '@/lib/i18n';
 
 interface HeaderProps {
   userName?: string;
+  appName?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ userName }) => {
+export const Header: React.FC<HeaderProps> = ({ userName, appName }) => {
   const { t } = useT();
   const [showNotif, setShowNotif] = useState(false);
   const [time, setTime] = useState(new Date());
@@ -27,7 +28,7 @@ export const Header: React.FC<HeaderProps> = ({ userName }) => {
         </div>
         <div>
           <h1 className="text-lg font-black tracking-tighter uppercase font-display">
-            YALLY<span className="text-gradient-emerald">.</span>BET
+            {appName ? appName : (<>YALLY<span className="text-gradient-emerald">.</span>BET</>)}
           </h1>
           <div className="flex items-center gap-1.5 -mt-0.5">
             <Wifi size={8} className="text-primary" />

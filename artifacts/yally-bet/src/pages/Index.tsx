@@ -267,13 +267,14 @@ const Index = () => {
         onRegister={handleRegister}
         isLoading={isLoading}
         loginError={loginError}
+        settings={settings}
       />
     );
   }
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto relative">
-      <Header userName={loginName} />
+      <Header userName={loginName} appName={settings.appName} />
 
       <main className="relative">
         <AnimatePresence mode="wait">

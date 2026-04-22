@@ -4,6 +4,7 @@ import { Trophy, TrendingUp, Users, Sparkles, ArrowRight, User, Phone, Mail, Key
 import loginBg from '@/assets/login-bg.jpg';
 import matrixLogo from '@/assets/yally-logo.svg';
 import { useT } from '@/lib/i18n';
+import { Settings } from '@/types/betting';
 
 interface LoginScreenProps {
   loginName: string;
@@ -18,12 +19,13 @@ interface LoginScreenProps {
   onRegister: () => void;
   isLoading?: boolean;
   loginError?: string;
+  settings?: Settings;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({
   loginName, loginEmail, loginPhone, loginPassword,
   setLoginName, setLoginEmail, setLoginPhone, setLoginPassword,
-  onLogin, onRegister, isLoading, loginError
+  onLogin, onRegister, isLoading, loginError, settings
 }) => {
   const { t } = useT();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
@@ -64,10 +66,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </motion.div>
           <div>
             <h1 className="text-4xl font-black tracking-tighter uppercase font-display">
-              YALLY<span className="text-gradient-emerald">.</span>BET
+              {settings?.appName ? settings.appName : (<>YALLY<span className="text-gradient-emerald">.</span>BET</>)}
             </h1>
             <p className="text-muted-foreground/60 text-[9px] font-bold uppercase tracking-[0.35em] mt-1.5">
-              {t('app.tagline')}
+              {settings?.appTagline || t('app.tagline')}
             </p>
           </div>
         </div>
@@ -75,9 +77,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         {/* Stats */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="flex justify-center gap-2">
           {[
-            { icon: Trophy,      value: '98%',   label: t('login.winRate'),   color: 'text-primary',     bg: 'bg-primary/8 border-primary/15' },
-            { icon: Users,       value: '14.2k', label: t('login.members'),    color: 'text-blue-400',    bg: 'bg-blue-500/8 border-blue-500/15' },
-            { icon: TrendingUp,  value: '450+',  label: t('login.dailyOdds'), color: 'text-amber-400',   bg: 'bg-amber-500/8 border-amber-500/15' },
+            { icon: Trophy,      value: settings?.winRatePct || '98%',     label: t('login.winRate'),   color: 'text-primary',     bg: 'bg-primary/8 border-primary/15' },
+            { icon: Users,       value: settings?.membersCount || '14.2k', label: t('login.members'),    color: 'text-blue-400',    bg: 'bg-blue-500/8 border-blue-500/15' },
+            { icon: TrendingUp,  value: settings?.dailyOddsCount || '450+', label: t('login.dailyOdds'), color: 'text-amber-400',   bg: 'bg-amber-500/8 border-amber-500/15' },
           ].map((s, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
               className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl glass-subtle border ${s.bg}`}
@@ -98,11 +100,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
           </div>
           <div>
             <p className="text-[10px] text-foreground/80 leading-relaxed">
-              "Nimepata TSH 2,500,000 wiki hii tu kwa VIP TICKET!"
+              {settings?.testimonialText || '"Nimepata TSH 2,500,000 wiki hii tu kwa VIP TICKET!"'}
             </p>
             <div className="flex items-center gap-1.5 mt-1.5">
               <div className="flex">{[...Array(5)].map((_, i) => <Star key={i} size={8} className="text-amber-400 fill-amber-400" />)}</div>
-              <span className="text-[8px] text-primary font-bold">@boss_kelvin</span>
+              <span className="text-[8px] text-primary font-bold">{settings?.testimonialAuthor || '@boss_kelvin'}</span>
             </div>
           </div>
         </motion.div>

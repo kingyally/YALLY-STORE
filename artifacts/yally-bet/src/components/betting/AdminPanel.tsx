@@ -5,7 +5,7 @@ import {
   History as HistoryIcon, Settings as SettingsIcon, Package, ChevronLeft,
   CheckCircle, XCircle, Crown, Lock, Target, Zap, Users, Eye, Mail, Phone, ShieldCheck, Clock, Ticket,
   Search, MoreVertical, Activity, TrendingUp, AlertCircle, RefreshCw, ToggleLeft, ToggleRight,
-  LayoutDashboard, DollarSign, BarChart3, Trophy, ShoppingBag
+  LayoutDashboard, DollarSign, BarChart3, Trophy, ShoppingBag, Sparkles, MessageSquare
 } from 'lucide-react';
 import { fetchBanners, uploadBannerImage, addBanner as addBannerToDb, updateBanner as updateBannerInDb, deleteBanner as deleteBannerFromDb, type Banner } from '@/lib/bannerService';
 import { Settings, Tipster, History as HistoryType } from '@/types/betting';
@@ -250,6 +250,15 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
         supportEmail: localSettings.supportEmail,
         paymentNumber: localSettings.paymentNumber,
         paymentMethods: localSettings.paymentMethods,
+        appName: localSettings.appName,
+        appTagline: localSettings.appTagline,
+        winRatePct: localSettings.winRatePct,
+        membersCount: localSettings.membersCount,
+        dailyOddsCount: localSettings.dailyOddsCount,
+        testimonialText: localSettings.testimonialText,
+        testimonialAuthor: localSettings.testimonialAuthor,
+        defaultTipsterAvatar: localSettings.defaultTipsterAvatar,
+        defaultLanguage: appLang,
       });
     }
     onUpdateSettings(localSettings);
@@ -1363,6 +1372,41 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
                 </div>
               </div>
 
+
+              {/* Branding section header */}
+              <div className="pt-2">
+                <h4 className="text-[10px] font-black text-primary/70 uppercase tracking-[0.25em] mb-2">🎨 Branding ya App</h4>
+              </div>
+
+              {[
+                { key: 'appName', label: 'Jina la App', type: 'text', icon: Sparkles, placeholder: 'YALLY BET' },
+                { key: 'appTagline', label: 'Tagline / Kauli Mbiu', type: 'text', icon: Target, placeholder: "Tanzania's #1 Betting Tips Platform" },
+                { key: 'winRatePct', label: 'Win Rate % (Onyesho la Login)', type: 'text', icon: Trophy, placeholder: '98%' },
+                { key: 'membersCount', label: 'Idadi ya Members (Onyesho)', type: 'text', icon: Users, placeholder: '14.2k' },
+                { key: 'dailyOddsCount', label: 'Daily Odds (Onyesho)', type: 'text', icon: Target, placeholder: '450+' },
+                { key: 'testimonialText', label: 'Ushuhuda — Maandishi', type: 'text', icon: MessageSquare, placeholder: '"Nimepata TSH 2,500,000..."' },
+                { key: 'testimonialAuthor', label: 'Ushuhuda — Mtumiaji', type: 'text', icon: UserCog, placeholder: '@boss_kelvin' },
+                { key: 'defaultTipsterAvatar', label: 'Avatar ya Tipster (URL)', type: 'url', icon: ImageIcon, placeholder: 'https://...' },
+              ].map(field => (
+                <div key={field.key} className="glass rounded-2xl p-4 space-y-2">
+                  <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
+                    <field.icon size={10} />
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    value={(localSettings as any)[field.key] ?? ''}
+                    onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
+                    placeholder={field.placeholder}
+                    className="w-full bg-card/50 border border-border/50 rounded-xl px-3.5 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
+                  />
+                </div>
+              ))}
+
+              {/* Contacts & Payment section header */}
+              <div className="pt-2">
+                <h4 className="text-[10px] font-black text-primary/70 uppercase tracking-[0.25em] mb-2">📞 Mawasiliano & Malipo</h4>
+              </div>
 
               {[
                 { key: 'paymentNumber', label: 'Namba ya Malipo', type: 'text', icon: Phone },
