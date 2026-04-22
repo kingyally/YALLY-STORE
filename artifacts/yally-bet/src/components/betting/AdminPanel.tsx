@@ -279,7 +279,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
   const allTabs: { id: AdminTab; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'settings', label: 'C/M', icon: SettingsIcon },
     { id: 'users', label: 'Watumiaji', icon: Users },
     { id: 'requests', label: 'Maombi', icon: Ticket },
     { id: 'buying', label: 'Manunuzi', icon: ShoppingBag },

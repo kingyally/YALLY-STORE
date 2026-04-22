@@ -7,7 +7,6 @@ import { HomeView } from '@/components/betting/HomeView';
 import { TicketsView } from '@/components/betting/TicketsView';
 import { HistoryView } from '@/components/betting/HistoryView';
 import { AccountView } from '@/components/betting/AccountView';
-import { SupportView } from '@/components/betting/SupportView';
 
 // Lazy-load heavy components to keep first paint snappy
 const PaymentModal = lazy(() => import('@/components/betting/PaymentModal').then(m => ({ default: m.PaymentModal })));
@@ -38,7 +37,7 @@ const Index = () => {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'home' | 'tickets' | 'history' | 'support' | 'account' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'tickets' | 'history' | 'account' | 'admin'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [unlockedTickets, setUnlockedTickets] = useState<number[]>([]);
 
@@ -300,7 +299,6 @@ const Index = () => {
             />
           )}
           {activeTab === 'history' && <HistoryView key="history" settings={settings} />}
-          {activeTab === 'support' && <SupportView key="support" settings={settings} />}
           {activeTab === 'account' && (
             <AccountView key="account" userName={loginName} userPhone={loginPhone}
               settings={settings} onLogout={handleLogout}
