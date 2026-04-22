@@ -85,10 +85,13 @@ const Index = () => {
     });
   };
 
-  // Check and set admin status for a user
+  // Check and set admin status for a user — ALWAYS resets first to prevent
+  // stale admin state from leaking across user sessions.
   const checkAndSetAdmin = async (user: AppUser) => {
+    setIsAdmin(false);
+    setAdminEntry(null);
     const entry = await getAdminEntry(user.email);
-    if (entry) {
+    if (entry && entry.email.toLowerCase() === user.email.toLowerCase()) {
       setIsAdmin(true);
       setAdminEntry(entry);
     }
@@ -143,6 +146,12 @@ const Index = () => {
   }, [isLoggedIn, currentUser]);
 
   const handleLoginSuccess = async (user: AppUser, isFirstUser = false) => {
+    // Always wipe any prior admin state before setting new user — prevents
+    // a previous admin's privileges from leaking into a new login.
+    setIsAdmin(false);
+    setAdminEntry(null);
+    setActiveTab('home');
+
     setCurrentUser(user);
     setIsLoggedIn(true);
     setLoginName(user.name);
@@ -154,9 +163,9 @@ const Index = () => {
       await addAdmin(user.email, 'system', ALL_PERMISSIONS);
     }
 
-    // Load admin status
+    // Load admin status — only grant if the entry's email exactly matches.
     const entry = await getAdminEntry(user.email);
-    if (entry) {
+    if (entry && entry.email.toLowerCase() === user.email.toLowerCase()) {
       setIsAdmin(true);
       setAdminEntry(entry);
     }
