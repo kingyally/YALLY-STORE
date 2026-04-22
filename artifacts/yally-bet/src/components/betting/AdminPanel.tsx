@@ -97,6 +97,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
   const [activeTab, setActiveTab] = useState<AdminTab>(firstTab);
   const [localSettings, setLocalSettings] = useState<Settings>({ ...settings });
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [editingTipster, setEditingTipster] = useState<Tipster | null>(null);
   const [editingHistory, setEditingHistory] = useState<HistoryType | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -240,27 +241,32 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Save settings to DB
-    if (dbAppSettings?.id) {
-      await updateAppSettings({
-        id: dbAppSettings.id,
-        telegramChannel: localSettings.telegramChannel,
-        whatsappGroup: localSettings.whatsappGroup,
-        whatsappNumber: localSettings.whatsappNumber,
-        supportEmail: localSettings.supportEmail,
-        paymentNumber: localSettings.paymentNumber,
-        paymentMethods: localSettings.paymentMethods,
-        appName: localSettings.appName,
-        appTagline: localSettings.appTagline,
-        winRatePct: localSettings.winRatePct,
-        membersCount: localSettings.membersCount,
-        dailyOddsCount: localSettings.dailyOddsCount,
-        testimonialText: localSettings.testimonialText,
-        testimonialAuthor: localSettings.testimonialAuthor,
-        defaultTipsterAvatar: localSettings.defaultTipsterAvatar,
-        defaultLanguage: appLang,
-      });
+    setSaveError('');
+    // Always save (server upserts with id='main') — no guard on dbAppSettings
+    const ok = await updateAppSettings({
+      telegramChannel: localSettings.telegramChannel || '',
+      whatsappGroup: localSettings.whatsappGroup || '',
+      whatsappNumber: localSettings.whatsappNumber || '',
+      supportEmail: localSettings.supportEmail || '',
+      paymentNumber: localSettings.paymentNumber || '',
+      paymentMethods: localSettings.paymentMethods || [],
+      appName: localSettings.appName,
+      appTagline: localSettings.appTagline,
+      winRatePct: localSettings.winRatePct,
+      membersCount: localSettings.membersCount,
+      dailyOddsCount: localSettings.dailyOddsCount,
+      testimonialText: localSettings.testimonialText,
+      testimonialAuthor: localSettings.testimonialAuthor,
+      defaultTipsterAvatar: localSettings.defaultTipsterAvatar,
+      defaultLanguage: appLang,
+    });
+    if (!ok) {
+      setSaveError('Imeshindikana kuhifadhi. Hakikisha umeingia kama admin na una mtandao.');
+      setIsSaving(false);
+      return;
     }
+    // Refresh the cached DB snapshot so subsequent saves see the latest
+    await loadAppSettings();
     onUpdateSettings(localSettings);
     setIsSaving(false);
     setShowSuccess(true);
@@ -446,6 +452,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
           >
             <CheckCircle size={18} className="text-primary" />
             <span className="text-xs font-bold text-primary">Imehifadhiwa vizuri!</span>
+          </motion.div>
+        )}
+        {saveError && (
+          <motion.div
+            initial={{ y: -20, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -20, opacity: 0, scale: 0.95 }}
+            className="absolute top-[120px] left-4 right-4 z-50 bg-destructive/10 border border-destructive/30 rounded-2xl p-3.5 flex items-start gap-2.5 backdrop-blur-xl"
+          >
+            <XCircle size={18} className="text-destructive flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <span className="text-xs font-bold text-destructive block">{saveError}</span>
+              <button onClick={() => setSaveError('')} className="text-[10px] text-destructive/70 underline mt-1">Funga</button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
