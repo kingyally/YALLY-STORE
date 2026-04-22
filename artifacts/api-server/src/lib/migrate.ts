@@ -110,6 +110,46 @@ CREATE INDEX IF NOT EXISTS idx_requests_status ON ticket_requests(status);
 CREATE INDEX IF NOT EXISTS idx_unlocked_user ON unlocked_tickets(user_id);
 CREATE INDEX IF NOT EXISTS idx_payment_orders_user ON payment_orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_payment_orders_status ON payment_orders(status);
+
+ALTER TABLE users ADD COLUMN IF NOT EXISTS banned BOOLEAN DEFAULT false;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMP;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS login_count INTEGER DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS notes TEXT DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS activity_log (
+  id SERIAL PRIMARY KEY,
+  actor_email VARCHAR DEFAULT '',
+  actor_role VARCHAR DEFAULT '',
+  action VARCHAR NOT NULL,
+  target_type VARCHAR DEFAULT '',
+  target_id VARCHAR DEFAULT '',
+  details JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_actor ON activity_log(actor_email);
+
+CREATE TABLE IF NOT EXISTS broadcasts (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR NOT NULL,
+  message TEXT NOT NULL,
+  audience VARCHAR DEFAULT 'all',
+  sent_by VARCHAR DEFAULT '',
+  sent_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_broadcasts_created ON broadcasts(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS user_notifications (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR NOT NULL,
+  broadcast_id INTEGER,
+  title VARCHAR NOT NULL,
+  message TEXT NOT NULL,
+  read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_notif_user ON user_notifications(user_id, read);
 `;
 
 export async function runMigrations() {

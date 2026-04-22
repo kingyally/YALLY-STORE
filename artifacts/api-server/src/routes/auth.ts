@@ -49,11 +49,15 @@ router.post("/login", async (req, res) => {
     }
     const cleanEmail = String(email).toLowerCase().trim();
     const r = await query<any>(
-      `SELECT id, password_hash FROM users WHERE LOWER(email) = $1`,
+      `SELECT id, password_hash, banned FROM users WHERE LOWER(email) = $1`,
       [cleanEmail],
     );
     if (!r.rows.length) {
       res.status(400).json({ error: "Email hii haijasajiliwa." });
+      return;
+    }
+    if (r.rows[0].banned) {
+      res.status(403).json({ error: "Akaunti yako imefungwa. Wasiliana na admin." });
       return;
     }
     const ok = await bcrypt.compare(String(password), r.rows[0].password_hash);
@@ -65,6 +69,10 @@ router.post("/login", async (req, res) => {
     await query(
       `INSERT INTO sessions (token, user_id, expires_at) VALUES ($1, $2, NOW() + INTERVAL '90 days')`,
       [token, r.rows[0].id],
+    );
+    await query(
+      `UPDATE users SET last_login = NOW(), login_count = COALESCE(login_count, 0) + 1 WHERE id = $1`,
+      [r.rows[0].id],
     );
     const user = await getSessionUser(token);
     res.json({ user, token });
