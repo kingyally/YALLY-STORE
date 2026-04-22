@@ -70,6 +70,16 @@ const Index = () => {
         if (Array.isArray(appSettings.paymentMethods) && appSettings.paymentMethods.length > 0) {
           merged.paymentMethods = appSettings.paymentMethods;
         }
+        // Branding fields
+        if (appSettings.appName) merged.appName = appSettings.appName;
+        if (appSettings.appTagline) merged.appTagline = appSettings.appTagline;
+        if (appSettings.winRatePct) merged.winRatePct = appSettings.winRatePct;
+        if (appSettings.membersCount) merged.membersCount = appSettings.membersCount;
+        if (appSettings.dailyOddsCount) merged.dailyOddsCount = appSettings.dailyOddsCount;
+        if (appSettings.testimonialText) merged.testimonialText = appSettings.testimonialText;
+        if (appSettings.testimonialAuthor) merged.testimonialAuthor = appSettings.testimonialAuthor;
+        if (appSettings.defaultTipsterAvatar) merged.defaultTipsterAvatar = appSettings.defaultTipsterAvatar;
+        if (appSettings.defaultLanguage) merged.defaultLanguage = appSettings.defaultLanguage;
       }
       return merged;
     });

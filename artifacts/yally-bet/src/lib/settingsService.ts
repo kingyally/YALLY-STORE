@@ -9,6 +9,16 @@ export interface AppSettings {
   supportEmail: string;
   paymentNumber: string;
   paymentMethods: string[];
+  // Branding (optional, falls back to defaults)
+  appName?: string;
+  appTagline?: string;
+  winRatePct?: string;
+  membersCount?: string;
+  dailyOddsCount?: string;
+  testimonialText?: string;
+  testimonialAuthor?: string;
+  defaultTipsterAvatar?: string;
+  defaultLanguage?: string;
 }
 
 // ===================== TIPSTERS =====================

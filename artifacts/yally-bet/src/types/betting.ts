@@ -53,4 +53,14 @@ export interface Settings {
   packages: Package[];
   tipsters: Tipster[];
   history: History[];
+  // Branding
+  appName?: string;
+  appTagline?: string;
+  winRatePct?: string;
+  membersCount?: string;
+  dailyOddsCount?: string;
+  testimonialText?: string;
+  testimonialAuthor?: string;
+  defaultTipsterAvatar?: string;
+  defaultLanguage?: string;
 }
