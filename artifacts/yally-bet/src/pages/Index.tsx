@@ -125,7 +125,7 @@ const Index = () => {
           loadUnlockedTickets(currentUser.id).then(setUnlockedTickets);
         }
       }
-    }, 5000);
+    }, 2500);
 
     const onVisibility = () => {
       if (document.visibilityState === 'visible') {

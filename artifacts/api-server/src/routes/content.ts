@@ -55,6 +55,9 @@ makeCrud("packages", "/packages");
 
 router.get("/settings", async (_req, res) => {
   const r = await query<{ data: any }>(`SELECT data FROM app_settings WHERE id = 'main'`);
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
   res.json({ settings: r.rows[0]?.data ?? null });
 });
 
