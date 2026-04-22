@@ -1441,21 +1441,37 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
                 { key: 'testimonialText', label: 'Ushuhuda — Maandishi', type: 'text', icon: MessageSquare, placeholder: '"Nimepata TSH 2,500,000..."' },
                 { key: 'testimonialAuthor', label: 'Ushuhuda — Mtumiaji', type: 'text', icon: UserCog, placeholder: '@boss_kelvin' },
                 { key: 'defaultTipsterAvatar', label: 'Avatar ya Tipster (URL)', type: 'url', icon: ImageIcon, placeholder: 'https://...' },
-              ].map(field => (
-                <div key={field.key} className="glass rounded-2xl p-4 space-y-2">
-                  <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
-                    <field.icon size={10} />
-                    {field.label}
-                  </label>
-                  <input
-                    type={field.type}
-                    value={(localSettings as any)[field.key] ?? ''}
-                    onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
-                    placeholder={field.placeholder}
-                    className="w-full bg-card/50 border border-border/50 rounded-xl px-3.5 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
-                  />
-                </div>
-              ))}
+              ].map(field => {
+                const value = (localSettings as any)[field.key] ?? '';
+                return (
+                  <div key={field.key} className="glass rounded-2xl p-4 space-y-2">
+                    <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
+                      <field.icon size={10} />
+                      {field.label}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={field.type}
+                        value={value}
+                        onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
+                        placeholder={field.placeholder}
+                        className="w-full bg-card/50 border border-border/50 rounded-xl pl-3.5 pr-10 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
+                      />
+                      {value && (
+                        <button
+                          type="button"
+                          onClick={() => setLocalSettings(prev => ({ ...prev, [field.key]: '' }))}
+                          aria-label="Futa"
+                          title="Futa"
+                          className="absolute top-1/2 -translate-y-1/2 right-2 w-7 h-7 flex items-center justify-center rounded-lg bg-destructive/10 hover:bg-destructive/25 text-destructive transition-colors"
+                        >
+                          <X size={14} strokeWidth={2.5} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
 
               {/* Contacts & Payment section header */}
               <div className="pt-2">
@@ -1468,21 +1484,58 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
                 { key: 'whatsappNumber', label: 'WhatsApp Number', type: 'text', icon: Phone },
                 { key: 'telegramChannel', label: 'Telegram Link', type: 'url', icon: Target },
                 { key: 'whatsappGroup', label: 'WhatsApp Group Link', type: 'url', icon: Users },
-              ].map(field => (
-                <div key={field.key} className="glass rounded-2xl p-4 space-y-2">
-                  <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
-                    <field.icon size={10} />
-                    {field.label}
-                  </label>
-                  <input
-                    type={field.type}
-                    value={(localSettings as any)[field.key] ?? ''}
-                    onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
-                    placeholder={field.label}
-                    className="w-full bg-card/50 border border-border/50 rounded-xl px-3.5 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
-                  />
-                </div>
-              ))}
+              ].map(field => {
+                const value = (localSettings as any)[field.key] ?? '';
+                return (
+                  <div key={field.key} className="glass rounded-2xl p-4 space-y-2">
+                    <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest flex items-center gap-1.5">
+                      <field.icon size={10} />
+                      {field.label}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={field.type}
+                        value={value}
+                        onChange={(e) => setLocalSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
+                        placeholder={field.label}
+                        className="w-full bg-card/50 border border-border/50 rounded-xl pl-3.5 pr-10 py-2.5 text-sm focus:border-primary/50 outline-none transition-all"
+                      />
+                      {value && (
+                        <button
+                          type="button"
+                          onClick={() => setLocalSettings(prev => ({ ...prev, [field.key]: '' }))}
+                          aria-label="Futa"
+                          title="Futa"
+                          className="absolute top-1/2 -translate-y-1/2 right-2 w-7 h-7 flex items-center justify-center rounded-lg bg-destructive/10 hover:bg-destructive/25 text-destructive transition-colors"
+                        >
+                          <X size={14} strokeWidth={2.5} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Futa Mawasiliano Yote */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('Una uhakika unataka kufuta taarifa zote za mawasiliano? Bonyeza SAVE baada ya kufuta.')) {
+                    setLocalSettings(prev => ({
+                      ...prev,
+                      paymentNumber: '',
+                      supportEmail: '',
+                      whatsappNumber: '',
+                      telegramChannel: '',
+                      whatsappGroup: '',
+                    }));
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-destructive/10 hover:bg-destructive/20 border border-destructive/20 text-destructive text-[11px] font-black uppercase tracking-widest transition-colors"
+              >
+                <Trash2 size={14} />
+                Futa Mawasiliano Yote
+              </button>
               <div className="glass rounded-2xl p-4 space-y-3">
                 <label className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-widest">Njia za Malipo</label>
                 <div className="flex flex-wrap gap-2">
