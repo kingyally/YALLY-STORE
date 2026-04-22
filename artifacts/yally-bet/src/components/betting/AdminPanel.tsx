@@ -5,8 +5,12 @@ import {
   History as HistoryIcon, Settings as SettingsIcon, Package, ChevronLeft,
   CheckCircle, XCircle, Crown, Lock, Target, Zap, Users, Eye, Mail, Phone, ShieldCheck, Clock, Ticket,
   Search, MoreVertical, Activity, TrendingUp, AlertCircle, RefreshCw, ToggleLeft, ToggleRight,
-  LayoutDashboard, DollarSign, BarChart3, Trophy, ShoppingBag, Sparkles, MessageSquare
+  LayoutDashboard, DollarSign, BarChart3, Trophy, ShoppingBag, Sparkles, MessageSquare, Megaphone
 } from 'lucide-react';
+import { DashboardEnhanced } from './admin/DashboardEnhanced';
+import { BroadcastsTab } from './admin/BroadcastsTab';
+import { ActivityTab } from './admin/ActivityTab';
+import { EnhancedUsersTab } from './admin/EnhancedUsersTab';
 import { fetchBanners, uploadBannerImage, addBanner as addBannerToDb, updateBanner as updateBannerInDb, deleteBanner as deleteBannerFromDb, type Banner } from '@/lib/bannerService';
 import { Settings, Tipster, History as HistoryType } from '@/types/betting';
 import { CATEGORIES } from '@/constants/betting';
@@ -22,7 +26,7 @@ interface AdminPanelProps {
   adminEntry: AdminEntry;
 }
 
-type AdminTab = 'dashboard' | 'users' | 'requests' | 'buying' | 'tipsters' | 'history' | 'settings' | 'packages' | 'banners' | 'admins';
+type AdminTab = 'dashboard' | 'users' | 'requests' | 'buying' | 'tipsters' | 'history' | 'settings' | 'packages' | 'banners' | 'admins' | 'broadcasts' | 'activity';
 
 // Stat card component
 const StatCard: React.FC<{ icon: React.ElementType; label: string; value: string | number; color?: string }> = ({ icon: Icon, label, value, color = 'primary' }) => (
@@ -284,6 +288,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
     { id: 'history', label: 'Historia', icon: HistoryIcon },
     { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'packages', label: 'Packages', icon: Package },
+    { id: 'broadcasts', label: 'Matangazo', icon: Megaphone },
+    { id: 'activity', label: 'Activity', icon: Activity },
   ];
 
   const tabs = allTabs.filter(tab =>
@@ -475,7 +481,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
         <AnimatePresence mode="wait">
           {/* =================== DASHBOARD TAB =================== */}
           {activeTab === 'dashboard' && (
-            <motion.div key="dashboard" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
+            <motion.div key="dashboard" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <DashboardEnhanced />
+            </motion.div>
+          )}
+
+          {/* =================== BROADCASTS TAB =================== */}
+          {activeTab === 'broadcasts' && (
+            <motion.div key="broadcasts" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <BroadcastsTab />
+            </motion.div>
+          )}
+
+          {/* =================== ACTIVITY TAB =================== */}
+          {activeTab === 'activity' && (
+            <motion.div key="activity" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <ActivityTab />
+            </motion.div>
+          )}
+
+          {/* =================== OLD DASHBOARD (HIDDEN) =================== */}
+          {false && (
+            <motion.div key="dashboard-old" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
               {/* Stats Grid 2x3 */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
@@ -679,7 +706,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ settings, onUpdateSettin
 
           {/* =================== USERS TAB =================== */}
           {activeTab === 'users' && (
-            <motion.div key="users" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
+            <motion.div key="users" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <EnhancedUsersTab onDeleteUser={async (id) => { await deleteUserFromDb(id); await loadUsers(); }} />
+            </motion.div>
+          )}
+
+          {/* =================== USERS TAB (OLD, HIDDEN) =================== */}
+          {false && (
+            <motion.div key="users-old" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
               {/* Stats */}
               <div className="flex gap-2">
                 <StatCard icon={Users} label="Jumla" value={allUsers.length} />

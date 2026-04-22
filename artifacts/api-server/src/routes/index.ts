@@ -27,6 +27,6 @@ router.use("/content", (req, res, next) => {
   });
 }, contentRouter);
 router.use("/payments", paymentsRouter);
-router.use("/admin-tools", adminToolsRouter);
+router.use("/admin-tools", requireUser, loadAdminContext, adminToolsRouter);
 
 export default router;

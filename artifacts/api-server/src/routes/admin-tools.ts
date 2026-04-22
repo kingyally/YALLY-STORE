@@ -229,7 +229,7 @@ router.post("/notifications/me/read", requireUser, async (req: AuthedRequest, re
 
 // ----- ACTIVITY LOG -----
 router.get("/activity-log", requireUser, requireAdmin, async (req, res) => {
-  const limit = Math.min(Number(req.query.limit ?? 100), 500);
+  const limit = Math.max(1, Math.min(parseInt(String(req.query.limit ?? "100"), 10) || 100, 500));
   const r = await query<any>(
     `SELECT * FROM activity_log ORDER BY created_at DESC LIMIT $1`,
     [limit],
