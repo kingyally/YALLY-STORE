@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Home, Ticket, History, UserCircle, Shield } from 'lucide-react';
+import { Home, Ticket, History, UserCircle, Shield, Headphones } from 'lucide-react';
 import { useT } from '@/lib/i18n';
 
-type TabType = 'home' | 'tickets' | 'history' | 'account' | 'admin';
+type TabType = 'home' | 'tickets' | 'history' | 'support' | 'account' | 'admin';
 
 interface BottomNavProps {
   activeTab: TabType;
@@ -18,6 +18,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab, i
     { id: 'home', icon: Home, label: shorten(t('nav.home')) },
     { id: 'tickets', icon: Ticket, label: shorten(t('nav.tickets')) },
     { id: 'history', icon: History, label: shorten(t('nav.history')) },
+    { id: 'support', icon: Headphones, label: 'C/M' },
     { id: 'account', icon: UserCircle, label: shorten(t('nav.account')) },
     { id: 'admin', icon: Shield, label: shorten(t('nav.admin')), adminOnly: true },
   ];
